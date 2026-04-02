@@ -32,10 +32,7 @@
       gap: 10px;
     }
 
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-    }
+    .logo-icon { width: 36px; height: 36px; }
 
     .logo-text {
       font-size: 1.3rem;
@@ -56,38 +53,44 @@
 
     .nav-cta:hover { background: #3a5ce0; }
 
-    /* HERO */
+    /* HERO — white background for contrast */
     .hero {
-      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
-      color: #ffffff;
+      background: #ffffff;
+      color: #1a1a2e;
+      padding: 80px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      padding: 100px 20px 80px;
     }
 
     .hero-tagline {
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      display: inline-block;
+      background: #eef1fe;
+      color: #4a6cf7;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      opacity: 0.75;
-      margin-bottom: 20px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
     }
 
     .hero h1 {
-      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-size: clamp(2.4rem, 6vw, 4rem);
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 20px;
       max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+      color: #1a1a2e;
     }
 
-    .hero h1 span { color: #7eb3ff; }
+    .hero h1 span { color: #4a6cf7; }
 
     .hero-sub {
       font-size: 1.1rem;
-      opacity: 0.85;
+      color: #555;
       max-width: 480px;
       margin: 0 auto 40px;
       line-height: 1.7;
@@ -98,6 +101,7 @@
       gap: 14px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 60px;
     }
 
     .btn-primary {
@@ -109,74 +113,196 @@
       font-weight: 700;
       font-size: 1rem;
       transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 20px rgba(74,108,247,0.35);
     }
 
-    .btn-primary:hover { background: #3a5ce0; transform: translateY(-1px); }
+    .btn-primary:hover { background: #3a5ce0; transform: translateY(-2px); }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.15);
-      color: #ffffff;
+      background: #f0f2ff;
+      color: #4a6cf7;
       padding: 16px 32px;
       border-radius: 10px;
       text-decoration: none;
       font-weight: 600;
       font-size: 1rem;
-      border: 1px solid rgba(255,255,255,0.3);
       transition: background 0.2s;
     }
 
-    .btn-secondary:hover { background: rgba(255,255,255,0.25); }
+    .btn-secondary:hover { background: #e0e4ff; }
 
-    /* CARD PREVIEW */
-    .preview-section {
-      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
-      padding: 0 20px 80px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .phone-mockup {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 30px 24px;
-      max-width: 320px;
+    /* SOCIAL PROOF BAR */
+    .proof-bar {
       width: 100%;
+      background: #f8f9ff;
+      border-top: 1px solid #eaecf8;
+      border-bottom: 1px solid #eaecf8;
+      padding: 20px;
       text-align: center;
-      color: #ffffff;
     }
 
-    .mock-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      border: 2px solid rgba(255,255,255,0.5);
-      margin: 0 auto 14px;
+    .proof-bar p {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 16px;
+    }
+
+    .proof-logos {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      gap: 32px;
+      flex-wrap: wrap;
     }
 
-    .mock-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
-    .mock-title { font-size: 0.8rem; opacity: 0.75; margin-bottom: 20px; line-height: 1.5; }
+    .proof-logo {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #bbb;
+      letter-spacing: 0.05em;
+    }
+
+    /* PHONE + CARD PREVIEW — dark background for contrast */
+    .preview-section {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 60%, #3a5270 100%);
+      padding: 70px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .preview-label {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* iPhone frame */
+    .iphone-frame {
+      width: 280px;
+      background: #111;
+      border-radius: 44px;
+      padding: 14px 10px;
+      box-shadow:
+        0 0 0 2px #333,
+        0 30px 80px rgba(0,0,0,0.5),
+        0 0 60px rgba(74,108,247,0.2);
+      position: relative;
+    }
+
+    .iphone-notch {
+      width: 90px;
+      height: 26px;
+      background: #111;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .iphone-screen {
+      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
+      border-radius: 34px;
+      padding: 20px 16px 24px;
+      overflow: hidden;
+    }
+
+    .mock-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.5);
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .mock-name { font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; margin-bottom: 4px; }
+    .mock-title { font-size: 0.68rem; color: rgba(255,255,255,0.75); text-align: center; margin-bottom: 14px; line-height: 1.5; }
+
+    .mock-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     .mock-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 13px 18px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
     .mock-btn-blue { background: #4a6cf7; color: #fff; }
     .mock-btn-white { background: #fff; color: #4a6cf7; }
+
+    .iphone-home {
+      width: 100px;
+      height: 4px;
+      background: #fff;
+      border-radius: 2px;
+      margin: 12px auto 0;
+      opacity: 0.4;
+    }
+
+    /* Tap ripple animation */
+    .tap-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .ripple {
+      width: 48px;
+      height: 48px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ripple::before, .ripple::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(74,108,247,0.6);
+      animation: ripple 2s ease-out infinite;
+    }
+
+    .ripple::after { animation-delay: 0.6s; }
+
+    .ripple-dot {
+      width: 14px;
+      height: 14px;
+      background: #4a6cf7;
+      border-radius: 50%;
+    }
+
+    @keyframes ripple {
+      0%   { width: 14px; height: 14px; opacity: 1; }
+      100% { width: 56px; height: 56px; opacity: 0; }
+    }
 
     /* HOW IT WORKS */
     .section {
@@ -211,10 +337,11 @@
 
     .step {
       text-align: center;
-      padding: 30px 20px;
+      padding: 36px 24px;
       background: #ffffff;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      border: 1px solid #f0f2ff;
     }
 
     .step-num {
@@ -253,22 +380,19 @@
 
     .feature {
       padding: 28px 24px;
-      background: #f5f7fa;
+      background: #f8f9ff;
       border-radius: 14px;
+      border: 1px solid #eef0ff;
     }
 
-    .feature-icon {
-      font-size: 1.8rem;
-      margin-bottom: 14px;
-    }
-
+    .feature-icon { font-size: 1.8rem; margin-bottom: 14px; }
     .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
     .feature p  { font-size: 0.88rem; color: #666; line-height: 1.6; }
 
     /* PRICING */
     .pricing-section {
       padding: 80px 20px;
-      max-width: 500px;
+      max-width: 480px;
       margin: 0 auto;
       text-align: center;
     }
@@ -308,7 +432,6 @@
     }
 
     .price-features li:last-child { border-bottom: none; }
-
     .check { color: #4a6cf7; font-weight: 700; }
 
     .btn-order {
@@ -321,9 +444,10 @@
       font-weight: 700;
       font-size: 1rem;
       transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 20px rgba(74,108,247,0.35);
     }
 
-    .btn-order:hover { background: #3a5ce0; transform: translateY(-1px); }
+    .btn-order:hover { background: #3a5ce0; transform: translateY(-2px); }
 
     /* FOOTER */
     footer {
@@ -335,6 +459,11 @@
     }
 
     footer strong { color: #fff; }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .logo-text { font-size: 1.1rem; }
+    }
   </style>
 </head>
 <body>
@@ -342,7 +471,6 @@
   <!-- NAV -->
   <nav>
     <div class="nav-logo">
-      <!-- Inline SVG logo matching the OneTap brand -->
       <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
         <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
@@ -355,24 +483,49 @@
 
   <!-- HERO -->
   <section class="hero">
-    <p class="hero-tagline">NFC Digital Business Cards</p>
+    <span class="hero-tagline">NFC Digital Business Cards</span>
     <h1>Tap Once.<br><span>Stand Out</span> Forever.</h1>
     <p class="hero-sub">The future of student networking. Share your resume, LinkedIn, and contact info instantly — no app required.</p>
     <div class="hero-buttons">
       <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-primary">Get Your Card — $25</a>
       <a href="#how-it-works" class="btn-secondary">See How It Works</a>
     </div>
+
+    <!-- SOCIAL PROOF BAR -->
+    <div class="proof-bar">
+      <p>Used by students at</p>
+      <div class="proof-logos">
+        <span class="proof-logo">University of Tampa</span>
+        <span class="proof-logo">USF</span>
+        <span class="proof-logo">FSU</span>
+        <span class="proof-logo">UF</span>
+        <span class="proof-logo">FIU</span>
+      </div>
+    </div>
   </section>
 
-  <!-- CARD PREVIEW -->
+  <!-- PHONE MOCKUP PREVIEW -->
   <div class="preview-section">
-    <div class="phone-mockup">
-      <div class="mock-avatar">👤</div>
-      <div class="mock-name">Your Name</div>
-      <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
-      <div class="mock-btn mock-btn-blue"><span>View Resume</span><span>↓</span></div>
-      <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
-      <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
+    <p class="preview-label">What they see when they tap</p>
+
+    <div class="iphone-frame">
+      <div class="iphone-notch"></div>
+      <div class="iphone-screen">
+        <div class="mock-avatar">👤</div>
+        <div class="mock-name">Your Name</div>
+        <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
+        <div class="mock-card">
+          <div class="mock-btn mock-btn-blue"><span>View Resume</span><span>↓</span></div>
+          <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
+          <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
+        </div>
+      </div>
+      <div class="iphone-home"></div>
+    </div>
+
+    <div class="tap-indicator">
+      <div class="ripple"><div class="ripple-dot"></div></div>
+      Hold card to phone to share
     </div>
   </div>
 
@@ -410,12 +563,12 @@
         <div class="feature">
           <div class="feature-icon">📱</div>
           <h3>No App Required</h3>
-          <p>Works with every iPhone's built-in NFC reader. Nothing to download.</p>
+          <p>Works with every iPhone's built-in NFC reader. Nothing to download, ever.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">📄</div>
           <h3>Resume on Demand</h3>
-          <p>Your resume is one tap away. Always up to date, always accessible.</p>
+          <p>Your resume is one tap away. Always current, always accessible.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">👤</div>
@@ -425,7 +578,7 @@
         <div class="feature">
           <div class="feature-icon">🔗</div>
           <h3>LinkedIn Connected</h3>
-          <p>Direct link to your LinkedIn profile so they can connect with you immediately.</p>
+          <p>Direct link to your LinkedIn so they can connect with you on the spot.</p>
         </div>
       </div>
     </div>
