@@ -3,27 +3,457 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OneTap Cards</title>
+  <title>OneTap Cards — The Future of Student Networking</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #1a1a2e;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      background: #ffffff;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    .nav-cta {
+      background: #4a6cf7;
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: #3a5ce0; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
       color: #ffffff;
       text-align: center;
-      padding: 40px 20px;
+      padding: 100px 20px 80px;
     }
-    h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 12px; }
-    p  { font-size: 1rem; opacity: 0.8; max-width: 320px; line-height: 1.6; }
+
+    .hero-tagline {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 span { color: #7eb3ff; }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      opacity: 0.85;
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: #4a6cf7;
+      color: #ffffff;
+      padding: 16px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover { background: #3a5ce0; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+      padding: 16px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.25); }
+
+    /* CARD PREVIEW */
+    .preview-section {
+      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
+      padding: 0 20px 80px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-mockup {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 30px 24px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .mock-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.5);
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .mock-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .mock-title { font-size: 0.8rem; opacity: 0.75; margin-bottom: 20px; line-height: 1.5; }
+
+    .mock-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 18px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .mock-btn-blue { background: #4a6cf7; color: #fff; }
+    .mock-btn-white { background: #fff; color: #4a6cf7; }
+
+    /* HOW IT WORKS */
+    .section {
+      padding: 80px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #4a6cf7;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      text-align: center;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 50px;
+      color: #1a1a2e;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 30px 20px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: #4a6cf7;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin: 0 auto 16px;
+    }
+
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p  { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+    /* FEATURES */
+    .features-bg {
+      background: #ffffff;
+      padding: 80px 20px;
+    }
+
+    .features {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+
+    .feature {
+      padding: 28px 24px;
+      background: #f5f7fa;
+      border-radius: 14px;
+    }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+
+    .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature p  { font-size: 0.88rem; color: #666; line-height: 1.6; }
+
+    /* PRICING */
+    .pricing-section {
+      padding: 80px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .price-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-shadow: 0 8px 40px rgba(74,108,247,0.15);
+      border: 2px solid #4a6cf7;
+    }
+
+    .price-amount {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #4a6cf7;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .price-amount span { font-size: 1.4rem; vertical-align: top; margin-top: 10px; display: inline-block; }
+    .price-per { font-size: 0.9rem; color: #888; margin-bottom: 24px; }
+
+    .price-features {
+      list-style: none;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .price-features li {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price-features li:last-child { border-bottom: none; }
+
+    .check { color: #4a6cf7; font-weight: 700; }
+
+    .btn-order {
+      display: block;
+      background: #4a6cf7;
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-order:hover { background: #3a5ce0; transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer {
+      background: #1a1a2e;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.85rem;
+    }
+
+    footer strong { color: #fff; }
   </style>
 </head>
 <body>
-  <h1>OneTap Cards</h1>
-  <p>Tap the card you were given to view your contact's profile.</p>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <!-- Inline SVG logo matching the OneTap brand -->
+      <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
+        <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
+        <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
+      </svg>
+      <span class="logo-text">OneTap</span>
+    </div>
+    <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="nav-cta">Order Now — $25</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-tagline">NFC Digital Business Cards</p>
+    <h1>Tap Once.<br><span>Stand Out</span> Forever.</h1>
+    <p class="hero-sub">The future of student networking. Share your resume, LinkedIn, and contact info instantly — no app required.</p>
+    <div class="hero-buttons">
+      <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-primary">Get Your Card — $25</a>
+      <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+    </div>
+  </section>
+
+  <!-- CARD PREVIEW -->
+  <div class="preview-section">
+    <div class="phone-mockup">
+      <div class="mock-avatar">👤</div>
+      <div class="mock-name">Your Name</div>
+      <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
+      <div class="mock-btn mock-btn-blue"><span>View Resume</span><span>↓</span></div>
+      <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
+      <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div id="how-it-works">
+    <div class="section">
+      <p class="section-label">How It Works</p>
+      <h2>Three steps to a better first impression</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Place Your Order</h3>
+          <p>Fill out a quick form with your info — name, LinkedIn, resume, and contact details.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>We Build Your Card</h3>
+          <p>We create your personal page and program it onto a sleek NFC card, shipped to you.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Tap & Share</h3>
+          <p>Hand someone your card. They tap it with their iPhone — your profile opens instantly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features-bg">
+    <div class="features">
+      <p class="section-label">Why OneTap</p>
+      <h2>Everything they need. One tap away.</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">📱</div>
+          <h3>No App Required</h3>
+          <p>Works with every iPhone's built-in NFC reader. Nothing to download.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📄</div>
+          <h3>Resume on Demand</h3>
+          <p>Your resume is one tap away. Always up to date, always accessible.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👤</div>
+          <h3>Instant Contact Save</h3>
+          <p>Tap "Contact Information" and your info saves directly to their iPhone contacts.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔗</div>
+          <h3>LinkedIn Connected</h3>
+          <p>Direct link to your LinkedIn profile so they can connect with you immediately.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing-section">
+    <p class="section-label">Pricing</p>
+    <h2>Simple & affordable</h2>
+    <div class="price-card">
+      <div class="price-amount"><span>$</span>25</div>
+      <div class="price-per">per card</div>
+      <ul class="price-features">
+        <li><span class="check">✓</span> Custom profile page</li>
+        <li><span class="check">✓</span> Resume hosting</li>
+        <li><span class="check">✓</span> LinkedIn link</li>
+        <li><span class="check">✓</span> iOS contact save (vCard)</li>
+        <li><span class="check">✓</span> Physical NFC card</li>
+        <li><span class="check">✓</span> Free updates anytime</li>
+      </ul>
+      <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-order">Order Your Card</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <strong>OneTap Cards</strong> &nbsp;·&nbsp; onetapcards.co &nbsp;·&nbsp; &copy; 2026
+  </footer>
+
 </body>
 </html>
