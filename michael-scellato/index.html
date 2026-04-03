@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Digital Card</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 40px 20px 60px;
+    }
+
+    .card-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .profile-photo {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.7);
+      object-fit: cover;
+      margin-bottom: 24px;
+    }
+
+    .name {
+      color: #ffffff;
+      font-size: 2.6rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .tagline {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      text-align: center;
+      line-height: 1.6;
+      max-width: 340px;
+      margin-bottom: 36px;
+    }
+
+    .links-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 18px 22px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: opacity 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+      transform: scale(0.98);
+    }
+
+    .btn-resume {
+      background: #4a6cf7;
+      color: #ffffff;
+    }
+
+    .btn-resume .btn-icon {
+      color: #ffffff;
+    }
+
+    .btn-white {
+      background: #ffffff;
+      color: #4a6cf7;
+    }
+
+    .btn-white .btn-icon {
+      color: #4a6cf7;
+    }
+
+    .btn-icon {
+      font-size: 1.1rem;
+    }
+
+    .powered-by {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .powered-by a {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .powered-by a:hover {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .powered-by a span {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-wrapper">
+    <img id="profile-photo" class="profile-photo" src="assets/photo.jpg" alt="Profile Photo">
+    <h1 id="name" class="name"></h1>
+    <p id="tagline" class="tagline"></p>
+
+    <div class="links-card">
+      <a id="resume-btn" class="btn btn-resume" href="#" target="_blank" rel="noopener">
+        <span class="btn-label">View Resume</span>
+        <span class="btn-icon"><i class="fa-solid fa-download"></i></span>
+      </a>
+
+      <a id="linkedin-btn" class="btn btn-white" href="#" target="_blank" rel="noopener">
+        <span class="btn-label">LinkedIn</span>
+        <span class="btn-icon"><i class="fa-brands fa-linkedin-in"></i></span>
+      </a>
+
+      <button id="contact-btn" class="btn btn-white">
+        <span class="btn-label">Contact Information</span>
+        <span class="btn-icon"><i class="fa-solid fa-circle-info"></i></span>
+      </button>
+    </div>
+
+    <div class="powered-by">
+      <a href="https://onetapcards.co" target="_blank">Want one? <span>Get your OneTap Card →</span></a>
+    </div>
+  </div>
+
+  <script>
+    // ================================================================
+    //  CLIENT CONFIG — edit only this block for each new client
+    // ================================================================
+    const CLIENT = {
+      name:        "Michael Scellato",
+      tagline:     "Senior at the University of Tampa — International Business & Entrepreneurship — Minor in Finance",
+      photo:       "assets/photo.jpeg",
+      resumeUrl:   "assets/resume.pdf",
+      linkedinUrl: "https://www.linkedin.com/in/michael-scellato-052b1930b",
+
+      contact: {
+        firstName: "Michael",
+        lastName:  "Scellato",
+        phone:     "+17722043581",
+        email:     "michael.p.scellato@gmail.com",
+        title:     "International Business & Entrepreneurship Student",
+        company:   "University of Tampa",
+        website:   ""
+      }
+    };
+    // ================================================================
+
+    document.title = CLIENT.name + " — OneTap Card";
+    document.getElementById("name").textContent    = CLIENT.name;
+    document.getElementById("tagline").textContent = CLIENT.tagline;
+    document.getElementById("profile-photo").src   = CLIENT.photo;
+    document.getElementById("profile-photo").alt   = CLIENT.name;
+    document.getElementById("resume-btn").href     = CLIENT.resumeUrl;
+    document.getElementById("linkedin-btn").href   = CLIENT.linkedinUrl;
+
+    document.getElementById("contact-btn").addEventListener("click", function () {
+      const c = CLIENT.contact;
+
+      const lines = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${c.firstName} ${c.lastName}`,
+        `N:${c.lastName};${c.firstName};;;`,
+        c.phone   ? `TEL;TYPE=CELL:${c.phone}` : "",
+        c.email   ? `EMAIL:${c.email}`          : "",
+        c.title   ? `TITLE:${c.title}`          : "",
+        c.company ? `ORG:${c.company}`          : "",
+        c.website ? `URL:${c.website}`          : "",
+        "END:VCARD"
+      ].filter(Boolean).join("\n");
+
+      const blob = new Blob([lines], { type: "text/vcard;charset=utf-8" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = `${c.firstName}_${c.lastName}.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+
+</body>
+</html>
