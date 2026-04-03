@@ -187,31 +187,50 @@
     /* iPhone frame */
     .iphone-frame {
       width: 280px;
-      background: #111;
-      border-radius: 44px;
-      padding: 14px 10px;
+      background: #1a1a1a;
+      border-radius: 52px;
+      padding: 12px 8px;
       box-shadow:
-        0 0 0 2px #333,
-        0 30px 80px rgba(0,0,0,0.5),
-        0 0 60px rgba(74,108,247,0.2);
+        0 0 0 1px #444,
+        0 0 0 3px #1a1a1a,
+        0 0 0 4px #555,
+        0 40px 100px rgba(0,0,0,0.6),
+        0 0 80px rgba(74,108,247,0.15);
       position: relative;
     }
 
+    /* Dynamic Island */
     .iphone-notch {
       width: 90px;
-      height: 26px;
-      background: #111;
-      border-radius: 0 0 18px 18px;
-      margin: 0 auto 8px;
+      height: 30px;
+      background: #1a1a1a;
+      border-radius: 0 0 20px 20px;
+      margin: 0 auto 0;
       position: relative;
       z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dynamic-island {
+      width: 96px;
+      height: 30px;
+      background: #000;
+      border-radius: 20px;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
     }
 
     .iphone-screen {
       background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
-      border-radius: 34px;
-      padding: 20px 16px 24px;
+      border-radius: 44px;
+      padding: 50px 16px 24px;
       overflow: hidden;
+      position: relative;
     }
 
     .mock-avatar {
@@ -509,8 +528,8 @@
     <p class="preview-label">What they see when they tap</p>
 
     <div class="iphone-frame">
-      <div class="iphone-notch"></div>
       <div class="iphone-screen">
+      <div class="dynamic-island"></div>
         <div class="mock-avatar">👤</div>
         <div class="mock-name">Your Name</div>
         <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
@@ -519,8 +538,8 @@
           <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
           <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
         </div>
-      </div>
       <div class="iphone-home"></div>
+      </div>
     </div>
 
     <div class="tap-indicator">
