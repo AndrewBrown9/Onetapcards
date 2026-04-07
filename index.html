@@ -4,110 +4,117 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OneTap Cards — The Future of Student Networking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f5f7fa;
+      background: #ffffff;
       color: #1a1a2e;
+      overflow-x: hidden;
     }
 
-    /* NAV */
+    /* ── NAV ── */
     nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 40px;
+      padding: 18px 40px;
       background: #ffffff;
       box-shadow: 0 1px 12px rgba(0,0,0,0.06);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-icon { width: 36px; height: 36px; }
-
-    .logo-text {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-text { font-size: 1.3rem; font-weight: 800; color: #1a1a2e; }
     .nav-cta {
       background: #4a6cf7;
-      color: #ffffff;
-      padding: 10px 22px;
+      color: #fff;
+      padding: 11px 24px;
       border-radius: 8px;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.9rem;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .nav-cta:hover { background: #3a5ce0; transform: translateY(-1px); }
+
+    /* ── MARQUEE ── */
+    .marquee-bar {
+      background: #1a1a2e;
+      padding: 12px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 25s linear infinite;
+    }
+    .marquee-item {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 32px;
+    }
+    .marquee-item span { color: #4a6cf7; margin-right: 32px; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
 
-    .nav-cta:hover { background: #3a5ce0; }
-
-    /* HERO — white background for contrast */
+    /* ── HERO ── */
     .hero {
       background: #ffffff;
-      color: #1a1a2e;
-      padding: 80px 20px 60px;
+      padding: 90px 20px 70px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
     }
-
-    .hero-tagline {
+    .hero-badge {
       display: inline-block;
       background: #eef1fe;
       color: #4a6cf7;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 6px 16px;
+      padding: 6px 18px;
       border-radius: 100px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
-
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 20px;
-      max-width: 700px;
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 22px;
+      max-width: 740px;
       color: #1a1a2e;
+      letter-spacing: -0.02em;
     }
-
     .hero h1 span { color: #4a6cf7; }
-
     .hero-sub {
       font-size: 1.1rem;
       color: #555;
-      max-width: 480px;
+      max-width: 500px;
       margin: 0 auto 40px;
       line-height: 1.7;
     }
-
     .hero-buttons {
       display: flex;
       gap: 14px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 60px;
+      margin-bottom: 70px;
     }
-
     .btn-primary {
       background: #4a6cf7;
-      color: #ffffff;
-      padding: 16px 32px;
+      color: #fff;
+      padding: 16px 34px;
       border-radius: 10px;
       text-decoration: none;
       font-weight: 700;
@@ -115,373 +122,407 @@
       transition: background 0.2s, transform 0.1s;
       box-shadow: 0 4px 20px rgba(74,108,247,0.35);
     }
-
     .btn-primary:hover { background: #3a5ce0; transform: translateY(-2px); }
-
     .btn-secondary {
       background: #f0f2ff;
       color: #4a6cf7;
-      padding: 16px 32px;
+      padding: 16px 34px;
       border-radius: 10px;
       text-decoration: none;
       font-weight: 600;
       font-size: 1rem;
       transition: background 0.2s;
     }
-
     .btn-secondary:hover { background: #e0e4ff; }
 
-    /* SOCIAL PROOF BAR */
-    .proof-bar {
-      width: 100%;
-      background: #f8f9ff;
-      border-top: 1px solid #eaecf8;
-      border-bottom: 1px solid #eaecf8;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .proof-bar p {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #999;
-      margin-bottom: 16px;
-    }
-
-    .proof-logos {
+    /* ── CARD + PHONE HERO VISUAL ── */
+    .hero-visual {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 48px;
       flex-wrap: wrap;
     }
 
-    .proof-logo {
+    /* Physical card mockup */
+    .card-mockup {
+      width: 320px;
+      height: 200px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #111 100%);
+      border-radius: 16px;
+      box-shadow:
+        0 2px 0 #555 inset,
+        0 -2px 0 #000 inset,
+        0 30px 60px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-mockup::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    }
+    .card-shine {
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .card-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-logo-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-logo-dot::after {
+      content: '';
+      width: 10px; height: 10px;
+      background: #4a6cf7;
+      border-radius: 50%;
+    }
+    .card-logo-text {
+      color: rgba(255,255,255,0.9);
       font-size: 0.95rem;
       font-weight: 700;
-      color: #bbb;
+      letter-spacing: 0.05em;
+    }
+    .card-nfc {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.25;
+    }
+    .card-nfc-arc {
+      width: 28px; height: 28px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      margin-bottom: -20px;
+      margin-left: 4px;
+    }
+    .card-nfc-arc:nth-child(2) { width: 20px; height: 20px; margin-bottom: -14px; }
+    .card-nfc-arc:nth-child(3) { width: 12px; height: 12px; }
+    .card-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .card-name {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .card-url {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.65rem;
       letter-spacing: 0.05em;
     }
 
-    /* PHONE + CARD PREVIEW — dark background for contrast */
-    .preview-section {
+    /* Phone mockup */
+    .phone-wrap { position: relative; }
+    .tap-arrow {
+      position: absolute;
+      left: -48px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .tap-arrow i { font-size: 1.2rem; color: #4a6cf7; animation: pulse-right 1.5s ease-in-out infinite; }
+    @keyframes pulse-right {
+      0%, 100% { transform: translateX(0); opacity: 0.6; }
+      50%       { transform: translateX(4px); opacity: 1; }
+    }
+
+    .hero-bg {
       background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 60%, #3a5270 100%);
       padding: 70px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
     }
-
     .preview-label {
-      color: rgba(255,255,255,0.6);
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 32px;
     }
 
-    /* iPhone frame */
     .iphone-frame {
-      width: 280px;
+      width: 260px;
       background: #1a1a1a;
-      border-radius: 52px;
-      padding: 12px 8px;
+      border-radius: 50px;
+      padding: 10px 7px;
       box-shadow:
         0 0 0 1px #444,
         0 0 0 3px #1a1a1a,
         0 0 0 4px #555,
         0 40px 100px rgba(0,0,0,0.6),
         0 0 80px rgba(74,108,247,0.15);
-      position: relative;
     }
-
-    /* Dynamic Island */
-    .iphone-notch {
-      width: 90px;
-      height: 30px;
-      background: #1a1a1a;
-      border-radius: 0 0 20px 20px;
-      margin: 0 auto 0;
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
     .dynamic-island {
-      width: 96px;
-      height: 30px;
+      width: 88px; height: 28px;
       background: #000;
       border-radius: 20px;
-      position: absolute;
-      top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin: 0 auto 0;
+      position: relative;
       z-index: 10;
     }
-
     .iphone-screen {
       background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
-      border-radius: 44px;
-      padding: 50px 16px 24px;
+      border-radius: 42px;
+      padding: 44px 14px 22px;
       overflow: hidden;
       position: relative;
     }
-
     .mock-avatar {
-      width: 58px;
-      height: 58px;
+      width: 54px; height: 54px;
       border-radius: 50%;
       background: rgba(255,255,255,0.25);
       border: 2px solid rgba(255,255,255,0.5);
-      margin: 0 auto 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
+      margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
     }
-
-    .mock-name { font-size: 1.1rem; font-weight: 700; color: #fff; text-align: center; margin-bottom: 4px; }
-    .mock-title { font-size: 0.68rem; color: rgba(255,255,255,0.75); text-align: center; margin-bottom: 14px; line-height: 1.5; }
-
+    .mock-name { font-size: 1rem; font-weight: 700; color: #fff; text-align: center; margin-bottom: 4px; }
+    .mock-title { font-size: 0.62rem; color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 12px; line-height: 1.4; }
     .mock-card {
       background: rgba(255,255,255,0.1);
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 12px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: flex; flex-direction: column; gap: 6px;
     }
-
     .mock-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: 7px;
+      font-size: 0.68rem; font-weight: 600;
     }
-
     .mock-btn-blue { background: #4a6cf7; color: #fff; }
     .mock-btn-white { background: #fff; color: #4a6cf7; }
-
     .iphone-home {
-      width: 100px;
-      height: 4px;
-      background: #fff;
-      border-radius: 2px;
-      margin: 12px auto 0;
-      opacity: 0.4;
+      width: 90px; height: 4px;
+      background: #fff; border-radius: 2px;
+      margin: 10px auto 0; opacity: 0.3;
     }
 
-    /* Tap ripple animation */
-    .tap-indicator {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.7);
-      font-size: 0.8rem;
-      font-weight: 500;
+    /* ── PROOF BAR ── */
+    .proof-bar {
+      background: #f8f9ff;
+      border-top: 1px solid #eaecf8;
+      border-bottom: 1px solid #eaecf8;
+      padding: 22px 20px;
+      text-align: center;
     }
-
-    .ripple {
-      width: 48px;
-      height: 48px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .proof-bar p {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #aaa; margin-bottom: 14px;
     }
+    .proof-logos { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; }
+    .proof-logo { font-size: 0.88rem; font-weight: 700; color: #ccc; letter-spacing: 0.04em; }
 
-    .ripple::before, .ripple::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid rgba(74,108,247,0.6);
-      animation: ripple 2s ease-out infinite;
-    }
-
-    .ripple::after { animation-delay: 0.6s; }
-
-    .ripple-dot {
-      width: 14px;
-      height: 14px;
-      background: #4a6cf7;
-      border-radius: 50%;
-    }
-
-    @keyframes ripple {
-      0%   { width: 14px; height: 14px; opacity: 1; }
-      100% { width: 56px; height: 56px; opacity: 0; }
-    }
-
-    /* HOW IT WORKS */
-    .section {
-      padding: 80px 20px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
+    /* ── SECTIONS ── */
+    .section-wrap { padding: 90px 20px; max-width: 1060px; margin: 0 auto; }
     .section-label {
+      text-align: center; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #4a6cf7; margin-bottom: 12px;
+    }
+    .section-title {
       text-align: center;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #4a6cf7;
-      margin-bottom: 12px;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      font-weight: 800; margin-bottom: 54px;
+      color: #1a1a2e; letter-spacing: -0.02em;
     }
 
-    .section h2 {
-      text-align: center;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 800;
-      margin-bottom: 50px;
-      color: #1a1a2e;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 30px;
-    }
-
+    /* ── HOW IT WORKS ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; }
     .step {
       text-align: center;
-      padding: 36px 24px;
-      background: #ffffff;
-      border-radius: 16px;
+      padding: 36px 24px 32px;
+      background: #fff;
+      border-radius: 18px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.07);
       border: 1px solid #f0f2ff;
+      position: relative;
     }
-
     .step-num {
-      width: 48px;
-      height: 48px;
+      width: 52px; height: 52px;
       background: #4a6cf7;
       color: #fff;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.1rem;
-      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 6px 16px rgba(74,108,247,0.35);
     }
+    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .step p  { font-size: 0.88rem; color: #666; line-height: 1.65; }
 
-    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-    .step p  { font-size: 0.9rem; color: #666; line-height: 1.6; }
-
-    /* FEATURES */
-    .features-bg {
-      background: #ffffff;
-      padding: 80px 20px;
-    }
-
-    .features {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
-    }
-
+    /* ── FEATURES ── */
+    .features-bg { background: #f8f9ff; padding: 90px 20px; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 22px; max-width: 1060px; margin: 0 auto; }
     .feature {
       padding: 28px 24px;
-      background: #f8f9ff;
+      background: #fff;
       border-radius: 14px;
       border: 1px solid #eef0ff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     }
-
     .feature-icon { font-size: 1.8rem; margin-bottom: 14px; }
     .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-    .feature p  { font-size: 0.88rem; color: #666; line-height: 1.6; }
+    .feature p  { font-size: 0.86rem; color: #666; line-height: 1.65; }
 
-    /* PRICING */
-    .pricing-section {
-      padding: 80px 20px;
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: center;
+    /* ── REVIEWS ── */
+    .reviews-bg { background: #1a1a2e; padding: 90px 20px; }
+    .reviews-header { text-align: center; margin-bottom: 50px; }
+    .reviews-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; color: #fff;
+      letter-spacing: -0.02em; margin-bottom: 14px;
     }
+    .stars-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .stars { color: #f5c842; font-size: 1.1rem; letter-spacing: 2px; }
+    .rating-text { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+    .review-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 26px 24px;
+    }
+    .review-stars { color: #f5c842; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 12px; }
+    .review-text { color: rgba(255,255,255,0.85); font-size: 0.92rem; line-height: 1.65; margin-bottom: 18px; }
+    .review-author { display: flex; align-items: center; gap: 12px; }
+    .review-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #4a6cf7, #8a9eb8);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 0.9rem;
+    }
+    .review-name { color: #fff; font-weight: 700; font-size: 0.88rem; }
+    .review-school { color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 2px; }
 
+    /* ── FAQ ── */
+    .faq-bg { background: #fff; padding: 90px 20px; }
+    .faq-wrap { max-width: 680px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid #eee;
+      padding: 22px 0;
+    }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer;
+      font-size: 1rem; font-weight: 700; color: #1a1a2e;
+      gap: 16px;
+      background: none; border: none; width: 100%; text-align: left;
+      padding: 0;
+    }
+    .faq-q i { color: #4a6cf7; font-size: 0.85rem; transition: transform 0.2s; flex-shrink: 0; }
+    .faq-q.open i { transform: rotate(45deg); }
+    .faq-a {
+      font-size: 0.9rem; color: #555; line-height: 1.7;
+      margin-top: 14px; display: none;
+    }
+    .faq-a.open { display: block; }
+
+    /* ── PRICING ── */
+    .pricing-bg { background: #f8f9ff; }
+    .pricing-section { padding: 90px 20px; max-width: 500px; margin: 0 auto; text-align: center; }
     .price-card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 40px 32px;
-      box-shadow: 0 8px 40px rgba(74,108,247,0.15);
+      background: #fff;
+      border-radius: 22px;
+      padding: 44px 36px;
+      box-shadow: 0 8px 48px rgba(74,108,247,0.12);
       border: 2px solid #4a6cf7;
     }
-
     .price-amount {
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: #4a6cf7;
-      line-height: 1;
-      margin-bottom: 6px;
+      font-size: 3.8rem; font-weight: 900;
+      color: #4a6cf7; line-height: 1; margin-bottom: 6px;
+      letter-spacing: -0.03em;
     }
-
-    .price-amount span { font-size: 1.4rem; vertical-align: top; margin-top: 10px; display: inline-block; }
-    .price-per { font-size: 0.9rem; color: #888; margin-bottom: 24px; }
-
-    .price-features {
-      list-style: none;
-      margin-bottom: 30px;
-      text-align: left;
-    }
-
+    .price-amount span { font-size: 1.5rem; vertical-align: top; margin-top: 10px; display: inline-block; }
+    .price-per { font-size: 0.9rem; color: #999; margin-bottom: 28px; }
+    .price-features { list-style: none; margin-bottom: 32px; text-align: left; }
     .price-features li {
-      padding: 10px 0;
+      padding: 11px 0;
       border-bottom: 1px solid #f0f0f0;
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 12px;
     }
-
     .price-features li:last-child { border-bottom: none; }
     .check { color: #4a6cf7; font-weight: 700; }
-
     .btn-order {
-      display: block;
-      background: #4a6cf7;
-      color: #ffffff;
-      padding: 16px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 1rem;
+      display: block; background: #4a6cf7; color: #fff;
+      padding: 17px; border-radius: 12px; text-decoration: none;
+      font-weight: 700; font-size: 1rem;
       transition: background 0.2s, transform 0.1s;
       box-shadow: 0 4px 20px rgba(74,108,247,0.35);
     }
-
     .btn-order:hover { background: #3a5ce0; transform: translateY(-2px); }
 
-    /* FOOTER */
-    footer {
-      background: #1a1a2e;
-      color: rgba(255,255,255,0.5);
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 100%);
+      padding: 90px 20px;
       text-align: center;
-      padding: 30px 20px;
-      font-size: 0.85rem;
     }
+    .bottom-cta h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900; color: #fff;
+      margin-bottom: 16px; letter-spacing: -0.02em;
+    }
+    .bottom-cta p { color: rgba(255,255,255,0.6); font-size: 1rem; margin-bottom: 36px; }
 
+    /* ── FOOTER ── */
+    footer {
+      background: #111;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 0.82rem;
+    }
     footer strong { color: #fff; }
 
-    @media (max-width: 600px) {
-      nav { padding: 16px 20px; }
-      .logo-text { font-size: 1.1rem; }
+    @media (max-width: 640px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 60px 20px 50px; }
+      .card-mockup { width: 280px; height: 176px; }
+      .tap-arrow { display: none; }
     }
   </style>
 </head>
@@ -489,85 +530,130 @@
 
   <!-- NAV -->
   <nav>
-    <div class="nav-logo">
-      <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <a class="nav-logo" href="/">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
         <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
         <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
         <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
       </svg>
       <span class="logo-text">OneTap</span>
-    </div>
+    </a>
     <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="nav-cta">Order Now — $25</a>
   </nav>
 
+  <!-- TOP MARQUEE -->
+  <div class="marquee-bar">
+    <div class="marquee-track">
+      <span class="marquee-item">Tap to Share <span>•</span></span>
+      <span class="marquee-item">No App Required <span>•</span></span>
+      <span class="marquee-item">Instant Contact Save <span>•</span></span>
+      <span class="marquee-item">Resume on Demand <span>•</span></span>
+      <span class="marquee-item">LinkedIn in One Tap <span>•</span></span>
+      <span class="marquee-item">Built for Students <span>•</span></span>
+      <span class="marquee-item">Update Anytime <span>•</span></span>
+      <span class="marquee-item">Tap to Share <span>•</span></span>
+      <span class="marquee-item">No App Required <span>•</span></span>
+      <span class="marquee-item">Instant Contact Save <span>•</span></span>
+      <span class="marquee-item">Resume on Demand <span>•</span></span>
+      <span class="marquee-item">LinkedIn in One Tap <span>•</span></span>
+      <span class="marquee-item">Built for Students <span>•</span></span>
+      <span class="marquee-item">Update Anytime <span>•</span></span>
+    </div>
+  </div>
+
   <!-- HERO -->
   <section class="hero">
-    <span class="hero-tagline">NFC Digital Business Cards</span>
+    <span class="hero-badge">NFC Digital Business Cards</span>
     <h1>Tap Once.<br><span>Stand Out</span> Forever.</h1>
-    <p class="hero-sub">The future of student networking. Share your resume, LinkedIn, and contact info instantly — no app required.</p>
+    <p class="hero-sub">The modern way for students to network. Share your resume, LinkedIn, and contact info with one tap — no app needed.</p>
     <div class="hero-buttons">
       <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-primary">Get Your Card — $25</a>
       <a href="#how-it-works" class="btn-secondary">See How It Works</a>
     </div>
-
-    <!-- SOCIAL PROOF BAR -->
-    <div class="proof-bar">
-      <p>Used by students at</p>
-      <div class="proof-logos">
-        <span class="proof-logo">University of Tampa</span>
-        <span class="proof-logo">USF</span>
-        <span class="proof-logo">FSU</span>
-        <span class="proof-logo">UF</span>
-        <span class="proof-logo">FIU</span>
-      </div>
-    </div>
   </section>
 
-  <!-- PHONE MOCKUP PREVIEW -->
-  <div class="preview-section">
-    <p class="preview-label">What they see when they tap</p>
-
-    <div class="iphone-frame">
-      <div class="iphone-screen">
-      <div class="dynamic-island"></div>
-        <div class="mock-avatar">👤</div>
-        <div class="mock-name">Your Name</div>
-        <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
-        <div class="mock-card">
-          <div class="mock-btn mock-btn-blue"><span>View Resume</span><span>↓</span></div>
-          <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
-          <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
-        </div>
-      <div class="iphone-home"></div>
-      </div>
+  <!-- PROOF BAR -->
+  <div class="proof-bar">
+    <p>Used by students at</p>
+    <div class="proof-logos">
+      <span class="proof-logo">University of Tampa</span>
+      <span class="proof-logo">USF</span>
+      <span class="proof-logo">FSU</span>
+      <span class="proof-logo">UF</span>
+      <span class="proof-logo">FIU</span>
     </div>
+  </div>
 
-    <div class="tap-indicator">
-      <div class="ripple"><div class="ripple-dot"></div></div>
-      Hold card to phone to share
+  <!-- PHONE PREVIEW -->
+  <div class="hero-bg">
+    <p class="preview-label">What they see when they tap</p>
+    <div style="display:flex; align-items:center; gap:40px; flex-wrap:wrap; justify-content:center;">
+
+      <!-- Physical card -->
+      <div class="card-mockup">
+        <div class="card-shine"></div>
+        <div class="card-logo">
+          <div class="card-logo-dot"></div>
+          <span class="card-logo-text">OneTap</span>
+        </div>
+        <div class="card-nfc">
+          <div class="card-nfc-arc"></div>
+          <div class="card-nfc-arc"></div>
+          <div class="card-nfc-arc"></div>
+        </div>
+        <div class="card-bottom">
+          <div>
+            <div class="card-name">Your Name</div>
+            <div class="card-url">onetapcards.co</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.5);font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">
+        <i class="fa-solid fa-arrow-right" style="color:#4a6cf7;font-size:1.4rem;animation:pulse-right 1.5s ease-in-out infinite;"></i>
+        Tap
+      </div>
+
+      <!-- Phone -->
+      <div class="iphone-frame">
+        <div class="iphone-screen">
+          <div class="dynamic-island"></div>
+          <div class="mock-avatar">👤</div>
+          <div class="mock-name">Your Name</div>
+          <div class="mock-title">Your School · Your Major<br>Graduating May 2026</div>
+          <div class="mock-card">
+            <div class="mock-btn mock-btn-blue"><span>View Resume</span><span>↓</span></div>
+            <div class="mock-btn mock-btn-white"><span>LinkedIn</span><span>in</span></div>
+            <div class="mock-btn mock-btn-white"><span>Contact Information</span><span>ℹ</span></div>
+          </div>
+          <div class="iphone-home"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- HOW IT WORKS -->
   <div id="how-it-works">
-    <div class="section">
+    <div class="section-wrap">
       <p class="section-label">How It Works</p>
-      <h2>Three steps to a better first impression</h2>
+      <h2 class="section-title">Up and running in three steps</h2>
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
           <h3>Place Your Order</h3>
-          <p>Fill out a quick form with your info — name, LinkedIn, resume, and contact details.</p>
+          <p>Order online for $25. We ship your card directly to you — pre-programmed and ready to activate.</p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h3>We Build Your Card</h3>
-          <p>We create your personal page and program it onto a sleek NFC card, shipped to you.</p>
+          <h3>Tap to Set Up</h3>
+          <p>When your card arrives, tap it to your iPhone. A setup wizard walks you through building your profile in minutes.</p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
           <h3>Tap & Share</h3>
-          <p>Hand someone your card. They tap it with their iPhone — your profile opens instantly.</p>
+          <p>Hand your card to anyone. They tap it with their iPhone and your full profile opens instantly — no app needed.</p>
         </div>
       </div>
     </div>
@@ -575,57 +661,225 @@
 
   <!-- FEATURES -->
   <div class="features-bg">
-    <div class="features">
-      <p class="section-label">Why OneTap</p>
-      <h2>Everything they need. One tap away.</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <div class="feature-icon">📱</div>
-          <h3>No App Required</h3>
-          <p>Works with every iPhone's built-in NFC reader. Nothing to download, ever.</p>
+    <div class="section-label">Why OneTap</div>
+    <h2 class="section-title" style="margin-top:12px;">Everything they need. One tap away.</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <h3>No App Required</h3>
+        <p>Works with every iPhone's built-in NFC reader. The other person doesn't need to download anything, ever.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3>Resume on Demand</h3>
+        <p>Your resume is always one tap away. Share it instantly at career fairs, networking events, or anywhere.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">👤</div>
+        <h3>Instant Contact Save</h3>
+        <p>Tap "Contact Information" and your info saves directly to their iPhone contacts. No typing required.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <h3>LinkedIn Connected</h3>
+        <p>Direct link to your LinkedIn so they can connect with you on the spot while you're still in the room.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✏️</div>
+        <h3>Update Anytime</h3>
+        <p>New resume? New job? Update your profile whenever you want. Your card always shows the latest version.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Set Up in Minutes</h3>
+        <p>Tap the card, fill out a quick form, upload your photo and resume. Your profile is live instantly.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="reviews-bg">
+    <div class="reviews-header">
+      <h2>Here's what students are saying.</h2>
+      <div class="stars-row">
+        <span class="stars">★★★★★</span>
+        <span class="rating-text">5.0 · Early reviews</span>
+      </div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"I used my OneTap card at a career fair and the recruiter was blown away. She had my resume on her phone before I even walked away from the booth."</p>
+        <div class="review-author">
+          <div class="review-avatar">JM</div>
+          <div>
+            <div class="review-name">Jake M.</div>
+            <div class="review-school">Finance · University of Tampa</div>
+          </div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">📄</div>
-          <h3>Resume on Demand</h3>
-          <p>Your resume is one tap away. Always current, always accessible.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Everyone at my internship asked where I got it. Setting it up took literally five minutes and it looks so much more professional than handing out paper cards."</p>
+        <div class="review-author">
+          <div class="review-avatar">SR</div>
+          <div>
+            <div class="review-name">Sofia R.</div>
+            <div class="review-school">Marketing · USF</div>
+          </div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">👤</div>
-          <h3>Instant Contact Save</h3>
-          <p>Tap "Contact Information" and your info saves directly to their iPhone contacts.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"The contact save feature is insane. They tap the card, hit a button, and boom — I'm saved in their phone. No more 'let me find you on LinkedIn' awkwardness."</p>
+        <div class="review-author">
+          <div class="review-avatar">CT</div>
+          <div>
+            <div class="review-name">Chris T.</div>
+            <div class="review-school">Business · FSU</div>
+          </div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🔗</div>
-          <h3>LinkedIn Connected</h3>
-          <p>Direct link to your LinkedIn so they can connect with you on the spot.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Worth every dollar. I updated my resume mid-semester and just re-uploaded it — the card stayed the same but my new resume was live in seconds."</p>
+        <div class="review-author">
+          <div class="review-avatar">AL</div>
+          <div>
+            <div class="review-name">Alyssa L.</div>
+            <div class="review-school">Communications · UF</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"I handed it to a professor after class and he said it was the most impressive thing a student had ever done to share their info. Got a research opportunity out of it."</p>
+        <div class="review-author">
+          <div class="review-avatar">DK</div>
+          <div>
+            <div class="review-name">Dylan K.</div>
+            <div class="review-school">Economics · FIU</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"The setup was stupid easy. Tap the card, fill in your info, upload a photo and resume. Done. My profile was live before I even left my dorm room."</p>
+        <div class="review-author">
+          <div class="review-avatar">MP</div>
+          <div>
+            <div class="review-name">Maya P.</div>
+            <div class="review-school">Finance · University of Tampa</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PRICING -->
-  <div class="pricing-section">
-    <p class="section-label">Pricing</p>
-    <h2>Simple & affordable</h2>
-    <div class="price-card">
-      <div class="price-amount"><span>$</span>25</div>
-      <div class="price-per">per card</div>
-      <ul class="price-features">
-        <li><span class="check">✓</span> Custom profile page</li>
-        <li><span class="check">✓</span> Resume hosting</li>
-        <li><span class="check">✓</span> LinkedIn link</li>
-        <li><span class="check">✓</span> iOS contact save (vCard)</li>
-        <li><span class="check">✓</span> Physical NFC card</li>
-        <li><span class="check">✓</span> Free updates anytime</li>
-      </ul>
-      <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-order">Order Your Card</a>
+  <!-- FAQ -->
+  <div class="faq-bg">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title" style="margin-top:12px;">Got questions? We've got answers.</h2>
+    <div class="faq-wrap">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does the other person need an app to view my card?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">No app required — ever. When someone taps your card to their iPhone, your profile opens instantly in their browser using the iPhone's built-in NFC reader.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does it work with Android phones?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">OneTap is optimized for iPhone, which uses NFC natively. Android support varies by device and browser, so we currently recommend it for iPhone users.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I update my profile after I set it up?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">Yes — tap your own card, scroll to the bottom of your profile, and hit "Edit Profile." You can update your bio, headshot, and resume anytime for free.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What's included with my card?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">You get a physical NFC card, a custom profile page with your resume, LinkedIn, bio, and contact save — plus free profile updates anytime. All for $25, no subscription.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How long does shipping take?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">Cards typically ship within 2–3 business days. You'll receive an email with tracking info once your card is on the way.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is there a monthly fee?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">No subscriptions, no monthly fees. You pay $25 once and own your card and profile forever.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What if I lose my card?
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <p class="faq-a">Your profile stays live at your unique link. If you need a replacement card, just order a new one and we'll set it up with the same profile URL.</p>
+      </div>
     </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing-bg">
+    <div class="pricing-section">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title" style="margin-top:12px; margin-bottom:32px;">Simple & affordable</h2>
+      <div class="price-card">
+        <div class="price-amount"><span>$</span>25</div>
+        <div class="price-per">one-time · no subscription</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Custom profile page</li>
+          <li><span class="check">✓</span> Resume hosting & sharing</li>
+          <li><span class="check">✓</span> LinkedIn link</li>
+          <li><span class="check">✓</span> iOS contact save (vCard)</li>
+          <li><span class="check">✓</span> Physical NFC card</li>
+          <li><span class="check">✓</span> Free profile updates anytime</li>
+        </ul>
+        <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-order">Order Your Card</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="bottom-cta">
+    <h2>Stop handing out paper cards.</h2>
+    <p>Join students who are already networking smarter.</p>
+    <a href="https://docs.google.com/forms/d/1XuApGITjuQ2MUTU6qabvy4LTjQxQK9qvh1FLzFaM48M/viewform" target="_blank" class="btn-primary">Get Your OneTap Card — $25</a>
   </div>
 
   <!-- FOOTER -->
   <footer>
     <strong>OneTap Cards</strong> &nbsp;·&nbsp; onetapcards.co &nbsp;·&nbsp; &copy; 2026
   </footer>
+
+  <script>
+    function toggleFaq(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
+      // Open clicked if it was closed
+      if (!isOpen) {
+        answer.classList.add('open');
+        btn.classList.add('open');
+      }
+    }
+  </script>
 
 </body>
 </html>
