@@ -265,6 +265,14 @@
     }
     .powered-by a:hover { color: rgba(255,255,255,0.8); }
     .powered-by a span { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+    .edit-profile-btn {
+      margin-top: 16px; background: none; border: none;
+      color: rgba(255,255,255,0.35); font-size: 0.75rem;
+      cursor: pointer; text-decoration: underline;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .edit-profile-btn:hover { color: rgba(255,255,255,0.6); }
   </style>
 </head>
 <body>
@@ -414,6 +422,69 @@
 
       <div class="powered-by">
         <a href="https://onetapcards.co" target="_blank">Want one? <span>Get your OneTap Card →</span></a>
+      </div>
+      <button class="edit-profile-btn" onclick="showEditScreen()">Edit Profile</button>
+    </div>
+  </div>
+
+  <!-- EDIT -->
+  <div id="screen-edit" class="screen">
+    <div class="wizard-wrap">
+      <div class="wizard-logo">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
+          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
+          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
+        </svg>
+        <div class="wizard-logo-text">OneTap</div>
+        <div class="wizard-logo-sub">Edit your profile</div>
+      </div>
+      <div class="wizard-card">
+        <h2 class="step-title">Update your info</h2>
+
+        <div class="field" style="margin-top:4px;">
+          <label>Bio / Summary</label>
+          <textarea id="edit-bio" maxlength="250" placeholder="Tell people about yourself..."></textarea>
+          <div class="char-count" id="edit-bio-count">0 / 250</div>
+        </div>
+
+        <div class="field">
+          <label>Headshot <span class="optional">— leave blank to keep current</span></label>
+          <div class="upload-area" id="edit-photo-area">
+            <input type="file" id="edit-inp-photo" accept="image/*">
+            <div class="upload-icon">🤳</div>
+            <div class="upload-hint"><strong>Tap to replace</strong> your photo</div>
+          </div>
+          <div class="crop-wrap" id="edit-crop-wrap">
+            <div class="crop-circle" id="edit-crop-circle">
+              <img id="edit-crop-img" class="crop-img" src="" alt="">
+            </div>
+            <p class="crop-hint">Drag to reposition</p>
+            <button class="change-photo-btn" onclick="document.getElementById('edit-inp-photo').click()">Change photo</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Resume <span class="optional">— leave blank to keep current</span></label>
+          <div class="upload-area">
+            <input type="file" id="edit-inp-resume" accept=".pdf">
+            <div class="upload-icon"><i class="fa-solid fa-file-pdf" style="color:rgba(255,255,255,0.8)"></i></div>
+            <div class="upload-hint"><strong>Tap to replace</strong> your resume<br>PDF only</div>
+            <div class="upload-filename" id="edit-resume-filename"></div>
+          </div>
+        </div>
+
+        <div id="edit-saving" style="display:none; text-align:center; padding:10px 0;">
+          <div class="loader" style="margin:0 auto 12px;"></div>
+          <div style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Saving changes...</div>
+        </div>
+
+        <button class="btn-submit" id="edit-save-btn" onclick="saveEdits()">
+          <i class="fa-solid fa-check"></i> Save Changes
+        </button>
+        <button class="btn-back" onclick="showScreen('profile')">
+          <i class="fa-solid fa-arrow-left"></i> Cancel
+        </button>
       </div>
     </div>
   </div>
@@ -654,8 +725,139 @@
       }
     }
 
+    // ── Edit crop ────────────────────────────────────────────────────────────
+    let eCropOffsetX = 0, eCropOffsetY = 0;
+    let eCropImgW = 0, eCropImgH = 0;
+    let eIsDragging = false, eDragStartX = 0, eDragStartY = 0;
+
+    document.getElementById('edit-inp-photo').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = document.getElementById('edit-crop-img');
+        img.src = ev.target.result;
+        img.onload = function () {
+          const ratio = img.naturalWidth / img.naturalHeight;
+          if (ratio >= 1) { eCropImgH = CROP_SIZE; eCropImgW = CROP_SIZE * ratio; }
+          else             { eCropImgW = CROP_SIZE; eCropImgH = CROP_SIZE / ratio; }
+          img.style.width  = eCropImgW + 'px';
+          img.style.height = eCropImgH + 'px';
+          eCropOffsetX = -(eCropImgW - CROP_SIZE) / 2;
+          eCropOffsetY = -(eCropImgH - CROP_SIZE) / 2;
+          img.style.left = eCropOffsetX + 'px';
+          img.style.top  = eCropOffsetY + 'px';
+          document.getElementById('edit-photo-area').style.display = 'none';
+          document.getElementById('edit-crop-wrap').style.display  = 'block';
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const editCropCircle = document.getElementById('edit-crop-circle');
+    editCropCircle.addEventListener('mousedown',  e => { eIsDragging = true; eDragStartX = e.clientX - eCropOffsetX; eDragStartY = e.clientY - eCropOffsetY; });
+    editCropCircle.addEventListener('touchstart', e => { eIsDragging = true; eDragStartX = e.touches[0].clientX - eCropOffsetX; eDragStartY = e.touches[0].clientY - eCropOffsetY; }, { passive: true });
+
+    document.addEventListener('mousemove', e => moveEditCrop(e.clientX, e.clientY));
+    document.addEventListener('touchmove', e => moveEditCrop(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+    document.addEventListener('mouseup',  () => eIsDragging = false);
+    document.addEventListener('touchend', () => eIsDragging = false);
+
+    function moveEditCrop(x, y) {
+      if (!eIsDragging) return;
+      const img = document.getElementById('edit-crop-img');
+      eCropOffsetX = Math.min(0, Math.max(x - eDragStartX, CROP_SIZE - eCropImgW));
+      eCropOffsetY = Math.min(0, Math.max(y - eDragStartY, CROP_SIZE - eCropImgH));
+      img.style.left = eCropOffsetX + 'px';
+      img.style.top  = eCropOffsetY + 'px';
+    }
+
+    async function getEditCroppedBlob() {
+      const img = document.getElementById('edit-crop-img');
+      const out = 400, scale = out / CROP_SIZE;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = out;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, eCropOffsetX * scale, eCropOffsetY * scale, eCropImgW * scale, eCropImgH * scale);
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    }
+
+    document.getElementById('edit-bio').addEventListener('input', function () {
+      const len = this.value.length;
+      const el  = document.getElementById('edit-bio-count');
+      el.textContent = len + ' / 250';
+      el.classList.remove('near', 'over');
+      if (len >= 250) el.classList.add('over');
+      else if (len >= 200) el.classList.add('near');
+    });
+
+    document.getElementById('edit-inp-resume').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const el = document.getElementById('edit-resume-filename');
+      el.textContent = '✓ ' + file.name;
+      el.style.display = 'block';
+    });
+
+    // ── Show edit screen ─────────────────────────────────────────────────────
+    function showEditScreen() {
+      document.getElementById('edit-bio').value = currentProfile.bio || '';
+      const len = (currentProfile.bio || '').length;
+      document.getElementById('edit-bio-count').textContent = len + ' / 250';
+      document.getElementById('edit-photo-area').style.display = 'block';
+      document.getElementById('edit-crop-wrap').style.display  = 'none';
+      document.getElementById('edit-resume-filename').style.display = 'none';
+      document.getElementById('edit-inp-photo').value  = '';
+      document.getElementById('edit-inp-resume').value = '';
+      showScreen('edit');
+    }
+
+    // ── Save edits ───────────────────────────────────────────────────────────
+    async function saveEdits() {
+      const bio           = document.getElementById('edit-bio').value.trim();
+      const newPhotoFile  = document.getElementById('edit-inp-photo').files[0];
+      const newResumeFile = document.getElementById('edit-inp-resume').files[0];
+
+      document.getElementById('edit-save-btn').style.display = 'none';
+      document.getElementById('edit-saving').style.display   = 'block';
+
+      try {
+        const updates = { bio };
+
+        if (newPhotoFile) {
+          const blob = await getEditCroppedBlob();
+          const path = `${cardId}/photo.jpg`;
+          await db.storage.from(BUCKET).upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+          const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
+          updates.photo_url = publicUrl + '?t=' + Date.now();
+        }
+
+        if (newResumeFile) {
+          const path = `${cardId}/resume.pdf`;
+          await db.storage.from(BUCKET).upload(path, newResumeFile, { upsert: true, contentType: 'application/pdf' });
+          const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
+          updates.resume_url = publicUrl;
+        }
+
+        const { error } = await db.from('profiles').update(updates).eq('id', cardId);
+        if (error) throw error;
+
+        const { data: profile } = await db.from('profiles').select('*').eq('id', cardId).single();
+        renderProfile(profile);
+        showScreen('profile');
+
+      } catch (err) {
+        console.error(err);
+        alert('Error saving: ' + (err.message || 'Unknown error'));
+        document.getElementById('edit-save-btn').style.display = 'flex';
+        document.getElementById('edit-saving').style.display   = 'none';
+      }
+    }
+
     // ── Render profile ───────────────────────────────────────────────────────
+    let currentProfile = null;
     function renderProfile(p) {
+      currentProfile = p;
       document.title = p.name + ' — OneTap Card';
 
       document.getElementById('profile-name').textContent = p.name;
