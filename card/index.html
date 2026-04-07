@@ -151,6 +151,26 @@
       margin-top: 8px; display: none;
     }
 
+    /* Crop UI */
+    .crop-wrap { display: none; text-align: center; margin-bottom: 4px; }
+    .crop-circle {
+      width: 220px; height: 220px;
+      border-radius: 50%; overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.6);
+      margin: 0 auto; position: relative;
+      cursor: grab; user-select: none; -webkit-user-select: none;
+    }
+    .crop-circle:active { cursor: grabbing; }
+    .crop-img { position: absolute; pointer-events: none; }
+    .crop-hint { color: rgba(255,255,255,0.5); font-size: 0.78rem; margin-top: 10px; }
+    .change-photo-btn {
+      background: none; border: none;
+      color: rgba(255,255,255,0.45); font-size: 0.78rem;
+      cursor: pointer; margin-top: 6px; padding: 4px 0;
+      display: block; width: 100%; text-align: center;
+    }
+    .change-photo-btn:hover { color: rgba(255,255,255,0.8); }
+
     /* Buttons */
     .btn-next, .btn-submit {
       width: 100%; padding: 15px;
@@ -327,9 +347,15 @@
           <h2 class="step-title">Add your headshot 📸</h2>
           <div class="upload-area" id="photo-area">
             <input type="file" id="inp-photo" accept="image/*">
-            <img id="photo-preview" class="photo-preview" alt="Preview">
-            <div class="upload-icon" id="photo-icon">🤳</div>
-            <div class="upload-hint"><strong>Tap to upload</strong> a photo<br>Square crop looks best</div>
+            <div class="upload-icon">🤳</div>
+            <div class="upload-hint"><strong>Tap to upload</strong> a photo</div>
+          </div>
+          <div class="crop-wrap" id="crop-wrap">
+            <div class="crop-circle" id="crop-circle">
+              <img id="crop-img" class="crop-img" src="" alt="">
+            </div>
+            <p class="crop-hint">Drag to reposition your photo</p>
+            <button class="change-photo-btn" onclick="document.getElementById('inp-photo').click()">Change photo</button>
           </div>
           <button class="btn-next" onclick="goStep(4)">Continue <i class="fa-solid fa-arrow-right"></i></button>
           <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -485,19 +511,63 @@
       }
     }
 
-    // ── Photo preview ────────────────────────────────────────────────────────
+    // ── Photo crop ───────────────────────────────────────────────────────────
+    const CROP_SIZE = 220;
+    let cropOffsetX = 0, cropOffsetY = 0;
+    let cropImgW = 0, cropImgH = 0;
+    let isDragging = false, dragStartX = 0, dragStartY = 0;
+
     document.getElementById('inp-photo').addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = ev => {
-        const preview = document.getElementById('photo-preview');
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
-        document.getElementById('photo-icon').style.display = 'none';
+        const img = document.getElementById('crop-img');
+        img.src = ev.target.result;
+        img.onload = function () {
+          const ratio = img.naturalWidth / img.naturalHeight;
+          if (ratio >= 1) { cropImgH = CROP_SIZE; cropImgW = CROP_SIZE * ratio; }
+          else             { cropImgW = CROP_SIZE; cropImgH = CROP_SIZE / ratio; }
+          img.style.width  = cropImgW + 'px';
+          img.style.height = cropImgH + 'px';
+          cropOffsetX = -(cropImgW - CROP_SIZE) / 2;
+          cropOffsetY = -(cropImgH - CROP_SIZE) / 2;
+          img.style.left = cropOffsetX + 'px';
+          img.style.top  = cropOffsetY + 'px';
+          document.getElementById('photo-area').style.display = 'none';
+          document.getElementById('crop-wrap').style.display  = 'block';
+        };
       };
       reader.readAsDataURL(file);
     });
+
+    const cropCircle = document.getElementById('crop-circle');
+    cropCircle.addEventListener('mousedown',  e => { isDragging = true; dragStartX = e.clientX - cropOffsetX; dragStartY = e.clientY - cropOffsetY; });
+    cropCircle.addEventListener('touchstart', e => { isDragging = true; dragStartX = e.touches[0].clientX - cropOffsetX; dragStartY = e.touches[0].clientY - cropOffsetY; }, { passive: true });
+
+    document.addEventListener('mousemove', e => moveCrop(e.clientX, e.clientY));
+    document.addEventListener('touchmove', e => moveCrop(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+    document.addEventListener('mouseup',  () => isDragging = false);
+    document.addEventListener('touchend', () => isDragging = false);
+
+    function moveCrop(x, y) {
+      if (!isDragging) return;
+      const img = document.getElementById('crop-img');
+      cropOffsetX = Math.min(0, Math.max(x - dragStartX, CROP_SIZE - cropImgW));
+      cropOffsetY = Math.min(0, Math.max(y - dragStartY, CROP_SIZE - cropImgH));
+      img.style.left = cropOffsetX + 'px';
+      img.style.top  = cropOffsetY + 'px';
+    }
+
+    async function getCroppedBlob() {
+      const img = document.getElementById('crop-img');
+      const out = 400, scale = out / CROP_SIZE;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = out;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, cropOffsetX * scale, cropOffsetY * scale, cropImgW * scale, cropImgH * scale);
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    }
 
     // ── Resume filename ──────────────────────────────────────────────────────
     document.getElementById('inp-resume').addEventListener('change', function (e) {
@@ -528,11 +598,11 @@
         // Upload photo (if provided)
         let photoUrl = null;
         if (photoFile) {
-          const ext = photoFile.name.split('.').pop().toLowerCase();
-          const path = `${cardId}/photo.${ext}`;
+          const croppedBlob = await getCroppedBlob();
+          const path = `${cardId}/photo.jpg`;
           const { error: photoErr } = await db.storage
             .from(BUCKET)
-            .upload(path, photoFile, { upsert: true, contentType: photoFile.type });
+            .upload(path, croppedBlob, { upsert: true, contentType: 'image/jpeg' });
           if (photoErr) throw photoErr;
           const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
           photoUrl = publicUrl;
