@@ -98,6 +98,23 @@
     .field input::placeholder { color: rgba(255,255,255,0.3); }
     .field input:focus { border-color: #4a6cf7; background: rgba(255,255,255,0.15); }
 
+    .field textarea {
+      width: 100%; padding: 13px 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff; font-size: 0.95rem;
+      outline: none; resize: none; height: 100px;
+      font-family: inherit;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .field textarea::placeholder { color: rgba(255,255,255,0.3); }
+    .field textarea:focus { border-color: #4a6cf7; background: rgba(255,255,255,0.15); }
+    .char-count { color: rgba(255,255,255,0.4); font-size: 0.75rem; text-align: right; margin-top: 4px; }
+    .char-count.near { color: #f7a94a; }
+    .char-count.over { color: #f74a4a; }
+
     .optional { color: rgba(255,255,255,0.35); font-size: 0.72rem; font-weight: 400; margin-left: 4px; }
 
     /* Upload areas */
@@ -268,58 +285,51 @@
 
       <div class="wizard-card">
 
-        <!-- Step 1: Basics -->
+        <!-- Step 1: Contact Info -->
         <div class="step active" id="step-1">
           <p class="step-label">Step 1 of 4</p>
-          <h2 class="step-title">What's your name? 👋</h2>
+          <h2 class="step-title">Let's get started 👋</h2>
           <div class="field">
             <label>Full Name</label>
             <input type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name">
           </div>
           <div class="field">
-            <label>Tagline <span class="optional">— one line about you</span></label>
-            <input type="text" id="inp-tagline" placeholder="Finance Student at USF · Tampa, FL">
+            <label>Personal Email</label>
+            <input type="email" id="inp-email" placeholder="jane@email.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" id="inp-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
           </div>
           <button class="btn-next" onclick="goStep(2)">Continue <i class="fa-solid fa-arrow-right"></i></button>
         </div>
 
-        <!-- Step 2: Photo -->
+        <!-- Step 2: LinkedIn + Bio -->
         <div class="step" id="step-2">
           <p class="step-label">Step 2 of 4</p>
+          <h2 class="step-title">Your profile & bio</h2>
+          <div class="field">
+            <label>LinkedIn Profile URL</label>
+            <input type="url" id="inp-linkedin" placeholder="https://linkedin.com/in/yourname">
+          </div>
+          <div class="field">
+            <label>Short Bio / Summary</label>
+            <textarea id="inp-bio" placeholder="Finance student at USF with a passion for investment banking. Graduating May 2026. Looking for summer internships." maxlength="250"></textarea>
+            <div class="char-count" id="bio-count">0 / 250</div>
+          </div>
+          <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+          <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+
+        <!-- Step 3: Headshot -->
+        <div class="step" id="step-3">
+          <p class="step-label">Step 3 of 4</p>
           <h2 class="step-title">Add your headshot 📸</h2>
           <div class="upload-area" id="photo-area">
             <input type="file" id="inp-photo" accept="image/*">
             <img id="photo-preview" class="photo-preview" alt="Preview">
             <div class="upload-icon" id="photo-icon">🤳</div>
             <div class="upload-hint"><strong>Tap to upload</strong> a photo<br>Square crop looks best</div>
-          </div>
-          <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right"></i></button>
-          <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        </div>
-
-        <!-- Step 3: Links & Contact -->
-        <div class="step" id="step-3">
-          <p class="step-label">Step 3 of 4</p>
-          <h2 class="step-title">Your links & contact info</h2>
-          <div class="field">
-            <label>LinkedIn URL</label>
-            <input type="url" id="inp-linkedin" placeholder="https://linkedin.com/in/yourname">
-          </div>
-          <div class="field">
-            <label>Email</label>
-            <input type="email" id="inp-email" placeholder="jane@email.com" autocomplete="email">
-          </div>
-          <div class="field">
-            <label>Phone <span class="optional">optional</span></label>
-            <input type="tel" id="inp-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
-          </div>
-          <div class="field">
-            <label>Job Title / Major</label>
-            <input type="text" id="inp-title" placeholder="Finance Student">
-          </div>
-          <div class="field">
-            <label>Company / University</label>
-            <input type="text" id="inp-company" placeholder="University of South Florida">
           </div>
           <button class="btn-next" onclick="goStep(4)">Continue <i class="fa-solid fa-arrow-right"></i></button>
           <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -359,7 +369,7 @@
     <div class="card-wrapper">
       <img id="profile-photo" class="profile-photo" src="" alt="Profile Photo">
       <h1 id="profile-name" class="p-name"></h1>
-      <p id="profile-tagline" class="p-tagline"></p>
+      <p id="profile-bio" class="p-tagline"></p>
 
       <div class="links-card">
         <a id="resume-btn" class="pbtn pbtn-blue" href="#" target="_blank" rel="noopener">
@@ -425,6 +435,16 @@
       }
     }
 
+    // ── Bio character counter ────────────────────────────────────────────────
+    document.getElementById('inp-bio').addEventListener('input', function () {
+      const len = this.value.length;
+      const el  = document.getElementById('bio-count');
+      el.textContent = len + ' / 250';
+      el.classList.remove('near', 'over');
+      if (len >= 250) el.classList.add('over');
+      else if (len >= 200) el.classList.add('near');
+    });
+
     // ── Wizard navigation ────────────────────────────────────────────────────
     let currentStep = 1;
 
@@ -433,15 +453,18 @@
       if (n > currentStep) {
         if (currentStep === 1) {
           if (!document.getElementById('inp-name').value.trim()) {
-            alert('Please enter your name.'); return;
-          }
-        }
-        if (currentStep === 3) {
-          if (!document.getElementById('inp-linkedin').value.trim()) {
-            alert('Please enter your LinkedIn URL.'); return;
+            alert('Please enter your full name.'); return;
           }
           if (!document.getElementById('inp-email').value.trim()) {
             alert('Please enter your email address.'); return;
+          }
+          if (!document.getElementById('inp-phone').value.trim()) {
+            alert('Please enter your phone number.'); return;
+          }
+        }
+        if (currentStep === 2) {
+          if (!document.getElementById('inp-linkedin').value.trim()) {
+            alert('Please enter your LinkedIn URL.'); return;
           }
         }
       }
@@ -488,12 +511,10 @@
     // ── Submit ───────────────────────────────────────────────────────────────
     async function submitProfile() {
       const name       = document.getElementById('inp-name').value.trim();
-      const tagline    = document.getElementById('inp-tagline').value.trim();
-      const linkedin   = document.getElementById('inp-linkedin').value.trim();
       const email      = document.getElementById('inp-email').value.trim();
       const phone      = document.getElementById('inp-phone').value.trim();
-      const title      = document.getElementById('inp-title').value.trim();
-      const company    = document.getElementById('inp-company').value.trim();
+      const linkedin   = document.getElementById('inp-linkedin').value.trim();
+      const bio        = document.getElementById('inp-bio').value.trim();
       const photoFile  = document.getElementById('inp-photo').files[0];
       const resumeFile = document.getElementById('inp-resume').files[0];
 
@@ -532,18 +553,16 @@
 
         // Save profile to database
         const { error: insertErr } = await db.from('profiles').insert({
-          id:              cardId,
+          id:            cardId,
           name,
-          tagline,
-          linkedin_url:    linkedin,
-          photo_url:       photoUrl,
-          resume_url:      resumeUrl,
-          contact_first:   firstName,
-          contact_last:    lastName,
-          contact_phone:   phone,
-          contact_email:   email,
-          contact_title:   title,
-          contact_company: company
+          bio,
+          linkedin_url:  linkedin,
+          photo_url:     photoUrl,
+          resume_url:    resumeUrl,
+          contact_first: firstName,
+          contact_last:  lastName,
+          contact_phone: phone,
+          contact_email: email
         });
         if (insertErr) throw insertErr;
 
@@ -569,8 +588,8 @@
     function renderProfile(p) {
       document.title = p.name + ' — OneTap Card';
 
-      document.getElementById('profile-name').textContent    = p.name;
-      document.getElementById('profile-tagline').textContent = p.tagline || '';
+      document.getElementById('profile-name').textContent = p.name;
+      document.getElementById('profile-bio').textContent  = p.bio || '';
 
       const photo = document.getElementById('profile-photo');
       if (p.photo_url) {
@@ -589,10 +608,8 @@
           'VERSION:3.0',
           `FN:${c.contact_first} ${c.contact_last}`,
           `N:${c.contact_last};${c.contact_first};;;`,
-          c.contact_phone   ? `TEL;TYPE=CELL:${c.contact_phone}` : '',
-          c.contact_email   ? `EMAIL:${c.contact_email}`          : '',
-          c.contact_title   ? `TITLE:${c.contact_title}`          : '',
-          c.contact_company ? `ORG:${c.contact_company}`          : '',
+          c.contact_phone ? `TEL;TYPE=CELL:${c.contact_phone}` : '',
+          c.contact_email ? `EMAIL:${c.contact_email}`          : '',
           'END:VCARD'
         ].filter(Boolean).join('\n');
 
