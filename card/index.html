@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>OneTap Card</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 60%, #3a5270 100%);
+    }
+
+    /* ---- SCREENS ---- */
+    .screen { display: none; }
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+    }
+
+    /* ---- LOADING ---- */
+    .loader {
+      width: 44px; height: 44px;
+      border: 4px solid rgba(255,255,255,0.15);
+      border-top-color: #4a6cf7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 0.9rem; }
+
+    /* ---- ERROR ---- */
+    .error-icon { font-size: 3rem; margin-bottom: 16px; }
+    .error-title { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+    .error-sub { color: rgba(255,255,255,0.55); text-align: center; font-size: 0.9rem; line-height: 1.6; }
+
+    /* ---- SETUP WIZARD ---- */
+    .wizard-wrap { width: 100%; max-width: 460px; }
+
+    .wizard-logo { text-align: center; margin-bottom: 28px; }
+    .wizard-logo svg { display: block; margin: 0 auto 10px; }
+    .wizard-logo-text { color: #fff; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+    .wizard-logo-sub { color: rgba(255,255,255,0.5); font-size: 0.82rem; margin-top: 4px; }
+
+    .progress-bar { display: flex; gap: 6px; margin-bottom: 24px; }
+    .progress-seg {
+      height: 4px; flex: 1; border-radius: 2px;
+      background: rgba(255,255,255,0.15);
+      transition: background 0.3s;
+    }
+    .progress-seg.done { background: #4a6cf7; }
+    .progress-seg.active { background: rgba(74,108,247,0.5); }
+
+    .wizard-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 28px 22px;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-label {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .step-title { color: #fff; font-size: 1.25rem; font-weight: 700; margin-bottom: 22px; line-height: 1.3; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; color: rgba(255,255,255,0.75);
+      font-size: 0.82rem; font-weight: 600; margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 13px 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff; font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.3); }
+    .field input:focus { border-color: #4a6cf7; background: rgba(255,255,255,0.15); }
+
+    .optional { color: rgba(255,255,255,0.35); font-size: 0.72rem; font-weight: 400; margin-left: 4px; }
+
+    /* Upload areas */
+    .upload-area {
+      border: 2px dashed rgba(255,255,255,0.25);
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: #4a6cf7;
+      background: rgba(74,108,247,0.08);
+    }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .photo-preview {
+      width: 90px; height: 90px;
+      border-radius: 50%; object-fit: cover;
+      border: 3px solid rgba(255,255,255,0.6);
+      margin: 0 auto 12px;
+      display: none;
+    }
+    .upload-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .upload-hint { color: rgba(255,255,255,0.55); font-size: 0.83rem; line-height: 1.5; }
+    .upload-hint strong { color: rgba(255,255,255,0.9); }
+    .upload-filename {
+      color: #fff; font-size: 0.85rem; font-weight: 600;
+      margin-top: 8px; display: none;
+    }
+
+    /* Buttons */
+    .btn-next, .btn-submit {
+      width: 100%; padding: 15px;
+      background: #4a6cf7; color: #fff;
+      border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; margin-top: 18px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-next:hover, .btn-submit:hover { background: #3a5ce0; }
+    .btn-next:active, .btn-submit:active { transform: scale(0.98); }
+    .btn-next:disabled, .btn-submit:disabled { background: rgba(74,108,247,0.4); cursor: not-allowed; }
+
+    .btn-back {
+      background: none; border: none;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.83rem; cursor: pointer;
+      padding: 12px 0 0;
+      display: flex; align-items: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-back:hover { color: rgba(255,255,255,0.75); }
+
+    /* Submitting state */
+    .submitting-inner { text-align: center; }
+    .submitting-inner .loader { margin: 0 auto 20px; }
+    .submitting-title { color: #fff; font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+    .submitting-sub { color: rgba(255,255,255,0.55); font-size: 0.88rem; }
+
+    /* ---- PROFILE SCREEN ---- */
+    #screen-profile {
+      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
+    }
+
+    .card-wrapper {
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .profile-photo {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.7);
+      object-fit: cover;
+      margin-bottom: 24px;
+    }
+    .profile-photo.hidden { display: none; }
+
+    .p-name {
+      color: #fff; font-size: 2.4rem; font-weight: 700;
+      text-align: center; margin-bottom: 14px; line-height: 1.1;
+    }
+    .p-tagline {
+      color: rgba(255,255,255,0.85); font-size: 0.95rem;
+      text-align: center; line-height: 1.6;
+      max-width: 340px; margin-bottom: 36px;
+    }
+
+    .links-card {
+      width: 100%;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 24px 20px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .pbtn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 18px 22px;
+      border-radius: 12px; border: none; cursor: pointer;
+      font-size: 1rem; font-weight: 500;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pbtn:active { opacity: 0.85; transform: scale(0.98); }
+    .pbtn-blue { background: #4a6cf7; color: #fff; }
+    .pbtn-white { background: #fff; color: #4a6cf7; }
+    .pbtn-icon { font-size: 1.1rem; }
+    .pbtn-blue .pbtn-icon { color: #fff; }
+    .pbtn-white .pbtn-icon { color: #4a6cf7; }
+
+    .powered-by { margin-top: 24px; text-align: center; }
+    .powered-by a {
+      color: rgba(255,255,255,0.45); font-size: 0.78rem;
+      text-decoration: none; transition: color 0.2s;
+    }
+    .powered-by a:hover { color: rgba(255,255,255,0.8); }
+    .powered-by a span { color: rgba(255,255,255,0.85); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div id="screen-loading" class="screen active">
+    <div class="loader"></div>
+    <p class="loading-text">Loading your card...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div id="screen-error" class="screen">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-title">Invalid Card</h1>
+    <p class="error-sub">This card link isn't valid.<br>Please contact OneTap support.</p>
+  </div>
+
+  <!-- SETUP WIZARD -->
+  <div id="screen-setup" class="screen">
+    <div class="wizard-wrap">
+
+      <div class="wizard-logo">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
+          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
+          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
+        </svg>
+        <div class="wizard-logo-text">OneTap</div>
+        <div class="wizard-logo-sub">Let's build your digital card</div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-seg active" id="prog-1"></div>
+        <div class="progress-seg" id="prog-2"></div>
+        <div class="progress-seg" id="prog-3"></div>
+        <div class="progress-seg" id="prog-4"></div>
+      </div>
+
+      <div class="wizard-card">
+
+        <!-- Step 1: Basics -->
+        <div class="step active" id="step-1">
+          <p class="step-label">Step 1 of 4</p>
+          <h2 class="step-title">What's your name? 👋</h2>
+          <div class="field">
+            <label>Full Name</label>
+            <input type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name">
+          </div>
+          <div class="field">
+            <label>Tagline <span class="optional">— one line about you</span></label>
+            <input type="text" id="inp-tagline" placeholder="Finance Student at USF · Tampa, FL">
+          </div>
+          <button class="btn-next" onclick="goStep(2)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <!-- Step 2: Photo -->
+        <div class="step" id="step-2">
+          <p class="step-label">Step 2 of 4</p>
+          <h2 class="step-title">Add your headshot 📸</h2>
+          <div class="upload-area" id="photo-area">
+            <input type="file" id="inp-photo" accept="image/*">
+            <img id="photo-preview" class="photo-preview" alt="Preview">
+            <div class="upload-icon" id="photo-icon">🤳</div>
+            <div class="upload-hint"><strong>Tap to upload</strong> a photo<br>Square crop looks best</div>
+          </div>
+          <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+          <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+
+        <!-- Step 3: Links & Contact -->
+        <div class="step" id="step-3">
+          <p class="step-label">Step 3 of 4</p>
+          <h2 class="step-title">Your links & contact info</h2>
+          <div class="field">
+            <label>LinkedIn URL</label>
+            <input type="url" id="inp-linkedin" placeholder="https://linkedin.com/in/yourname">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="inp-email" placeholder="jane@email.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label>Phone <span class="optional">optional</span></label>
+            <input type="tel" id="inp-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label>Job Title / Major</label>
+            <input type="text" id="inp-title" placeholder="Finance Student">
+          </div>
+          <div class="field">
+            <label>Company / University</label>
+            <input type="text" id="inp-company" placeholder="University of South Florida">
+          </div>
+          <button class="btn-next" onclick="goStep(4)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+          <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+
+        <!-- Step 4: Resume -->
+        <div class="step" id="step-4">
+          <p class="step-label">Step 4 of 4</p>
+          <h2 class="step-title">Upload your resume 📄</h2>
+          <div class="upload-area" id="resume-area">
+            <input type="file" id="inp-resume" accept=".pdf">
+            <div class="upload-icon"><i class="fa-solid fa-file-pdf" style="color:rgba(255,255,255,0.8)"></i></div>
+            <div class="upload-hint"><strong>Tap to upload</strong> your resume<br>PDF only</div>
+            <div class="upload-filename" id="resume-filename"></div>
+          </div>
+          <button class="btn-submit" id="submit-btn" onclick="submitProfile()">
+            <i class="fa-solid fa-check"></i> Create My Card
+          </button>
+          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+
+        <!-- Submitting -->
+        <div class="step" id="step-submitting">
+          <div class="submitting-inner">
+            <div class="loader" style="margin: 0 auto 22px;"></div>
+            <div class="submitting-title">Building your card...</div>
+            <div class="submitting-sub">Uploading files and saving your profile.<br>This takes just a few seconds.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="screen-profile" class="screen">
+    <div class="card-wrapper">
+      <img id="profile-photo" class="profile-photo" src="" alt="Profile Photo">
+      <h1 id="profile-name" class="p-name"></h1>
+      <p id="profile-tagline" class="p-tagline"></p>
+
+      <div class="links-card">
+        <a id="resume-btn" class="pbtn pbtn-blue" href="#" target="_blank" rel="noopener">
+          <span>View Resume</span>
+          <span class="pbtn-icon"><i class="fa-solid fa-download"></i></span>
+        </a>
+        <a id="linkedin-btn" class="pBtn pbtn-white" href="#" target="_blank" rel="noopener">
+          <span>LinkedIn</span>
+          <span class="pbtn-icon"><i class="fa-brands fa-linkedin-in"></i></span>
+        </a>
+        <button id="contact-btn" class="pBtn pbtn-white">
+          <span>Contact Information</span>
+          <span class="pbtn-icon"><i class="fa-solid fa-circle-info"></i></span>
+        </button>
+      </div>
+
+      <div class="powered-by">
+        <a href="https://onetapcards.co" target="_blank">Want one? <span>Get your OneTap Card →</span></a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Config ──────────────────────────────────────────────────────────────
+    const SUPABASE_URL = 'https://ivmxvbqqgvadkumgzmrg.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_WahaRq3N1AEQ7IrCgDVLMw_dIGZBEm0';
+    const BUCKET      = 'card-assets';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Get card ID from URL  e.g. onetapcards.co/card/?id=ABC123
+    const cardId = new URLSearchParams(window.location.search).get('id');
+
+    // ── Screen switcher ──────────────────────────────────────────────────────
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + name).classList.add('active');
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    async function init() {
+      if (!cardId) { showScreen('error'); return; }
+
+      try {
+        const { data, error } = await db
+          .from('profiles')
+          .select('*')
+          .eq('id', cardId)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data) {
+          renderProfile(data);
+          showScreen('profile');
+        } else {
+          showScreen('setup');
+        }
+      } catch (e) {
+        console.error(e);
+        showScreen('error');
+      }
+    }
+
+    // ── Wizard navigation ────────────────────────────────────────────────────
+    let currentStep = 1;
+
+    function goStep(n) {
+      // Validate current step before moving forward
+      if (n > currentStep) {
+        if (currentStep === 1) {
+          if (!document.getElementById('inp-name').value.trim()) {
+            alert('Please enter your name.'); return;
+          }
+        }
+        if (currentStep === 3) {
+          if (!document.getElementById('inp-linkedin').value.trim()) {
+            alert('Please enter your LinkedIn URL.'); return;
+          }
+          if (!document.getElementById('inp-email').value.trim()) {
+            alert('Please enter your email address.'); return;
+          }
+        }
+      }
+
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      document.getElementById('step-' + n).classList.add('active');
+      currentStep = n;
+      updateProgress(n);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress(step) {
+      for (let i = 1; i <= 4; i++) {
+        const seg = document.getElementById('prog-' + i);
+        seg.classList.remove('done', 'active');
+        if (i < step)  seg.classList.add('done');
+        if (i === step) seg.classList.add('active');
+      }
+    }
+
+    // ── Photo preview ────────────────────────────────────────────────────────
+    document.getElementById('inp-photo').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const preview = document.getElementById('photo-preview');
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+        document.getElementById('photo-icon').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ── Resume filename ──────────────────────────────────────────────────────
+    document.getElementById('inp-resume').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const el = document.getElementById('resume-filename');
+      el.textContent = '✓ ' + file.name;
+      el.style.display = 'block';
+    });
+
+    // ── Submit ───────────────────────────────────────────────────────────────
+    async function submitProfile() {
+      const name       = document.getElementById('inp-name').value.trim();
+      const tagline    = document.getElementById('inp-tagline').value.trim();
+      const linkedin   = document.getElementById('inp-linkedin').value.trim();
+      const email      = document.getElementById('inp-email').value.trim();
+      const phone      = document.getElementById('inp-phone').value.trim();
+      const title      = document.getElementById('inp-title').value.trim();
+      const company    = document.getElementById('inp-company').value.trim();
+      const photoFile  = document.getElementById('inp-photo').files[0];
+      const resumeFile = document.getElementById('inp-resume').files[0];
+
+      if (!resumeFile) { alert('Please upload your resume PDF.'); return; }
+
+      // Switch to submitting state
+      document.getElementById('step-4').classList.remove('active');
+      document.getElementById('step-submitting').classList.add('active');
+
+      try {
+        // Upload photo (if provided)
+        let photoUrl = null;
+        if (photoFile) {
+          const ext = photoFile.name.split('.').pop().toLowerCase();
+          const path = `${cardId}/photo.${ext}`;
+          const { error: photoErr } = await db.storage
+            .from(BUCKET)
+            .upload(path, photoFile, { upsert: true, contentType: photoFile.type });
+          if (photoErr) throw photoErr;
+          const { data: { publicUrl } } = db.storage.from(BUCKET).getPublicUrl(path);
+          photoUrl = publicUrl;
+        }
+
+        // Upload resume
+        const resumePath = `${cardId}/resume.pdf`;
+        const { error: resumeErr } = await db.storage
+          .from(BUCKET)
+          .upload(resumePath, resumeFile, { upsert: true, contentType: 'application/pdf' });
+        if (resumeErr) throw resumeErr;
+        const { data: { publicUrl: resumeUrl } } = db.storage.from(BUCKET).getPublicUrl(resumePath);
+
+        // Parse first / last name
+        const parts     = name.trim().split(/\s+/);
+        const firstName = parts[0];
+        const lastName  = parts.slice(1).join(' ');
+
+        // Save profile to database
+        const { error: insertErr } = await db.from('profiles').insert({
+          id:              cardId,
+          name,
+          tagline,
+          linkedin_url:    linkedin,
+          photo_url:       photoUrl,
+          resume_url:      resumeUrl,
+          contact_first:   firstName,
+          contact_last:    lastName,
+          contact_phone:   phone,
+          contact_email:   email,
+          contact_title:   title,
+          contact_company: company
+        });
+        if (insertErr) throw insertErr;
+
+        // Fetch saved profile and show it
+        const { data: profile } = await db
+          .from('profiles')
+          .select('*')
+          .eq('id', cardId)
+          .single();
+
+        renderProfile(profile);
+        showScreen('profile');
+
+      } catch (err) {
+        console.error(err);
+        alert('Something went wrong: ' + (err.message || 'Unknown error') + '\n\nPlease try again.');
+        document.getElementById('step-submitting').classList.remove('active');
+        document.getElementById('step-4').classList.add('active');
+      }
+    }
+
+    // ── Render profile ───────────────────────────────────────────────────────
+    function renderProfile(p) {
+      document.title = p.name + ' — OneTap Card';
+
+      document.getElementById('profile-name').textContent    = p.name;
+      document.getElementById('profile-tagline').textContent = p.tagline || '';
+
+      const photo = document.getElementById('profile-photo');
+      if (p.photo_url) {
+        photo.src = p.photo_url;
+      } else {
+        photo.classList.add('hidden');
+      }
+
+      document.getElementById('resume-btn').href  = p.resume_url  || '#';
+      document.getElementById('linkedin-btn').href = p.linkedin_url || '#';
+
+      document.getElementById('contact-btn').addEventListener('click', function () {
+        const c = p;
+        const lines = [
+          'BEGIN:VCARD',
+          'VERSION:3.0',
+          `FN:${c.contact_first} ${c.contact_last}`,
+          `N:${c.contact_last};${c.contact_first};;;`,
+          c.contact_phone   ? `TEL;TYPE=CELL:${c.contact_phone}` : '',
+          c.contact_email   ? `EMAIL:${c.contact_email}`          : '',
+          c.contact_title   ? `TITLE:${c.contact_title}`          : '',
+          c.contact_company ? `ORG:${c.contact_company}`          : '',
+          'END:VCARD'
+        ].filter(Boolean).join('\n');
+
+        const blob = new Blob([lines], { type: 'text/vcard;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `${c.contact_first}_${c.contact_last}.vcf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // ── Go ───────────────────────────────────────────────────────────────────
+    init();
+  </script>
+
+</body>
+</html>
