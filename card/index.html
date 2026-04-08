@@ -555,7 +555,8 @@
             <p style="font-size:0.75rem; color:var(--gray-600); line-height:1.6;">You may need to send your resume from your computer to your phone by emailing yourself the PDF, then opening the email on your phone and saving the file before uploading it here.</p>
           </div>
           <button class="btn-next" onclick="goStep(5)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
-          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
+          <button class="btn-back" onclick="goStep(3)" style="justify-content:center;"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
+          <p style="text-align:center; margin-top:10px;"><button onclick="goStep(5)" style="background:none; border:none; color:var(--gray-400); font-size:0.78rem; font-weight:500; font-family:inherit; cursor:pointer; text-decoration:underline; text-underline-offset:3px;">Skip for now — add resume later</button></p>
         </div>
 
         <!-- Step 5: PIN -->
@@ -952,7 +953,6 @@
       const photoFile  = document.getElementById('inp-photo').files[0];
       const resumeFile = document.getElementById('inp-resume').files[0];
 
-      if (!resumeFile) { alert('Please upload your resume PDF.'); goStep(4); return; }
       if (pin.length !== 4 || !/^\d{4}$/.test(pin)) { alert('Please enter a 4-digit PIN.'); return; }
       if (pin !== pinConfirm) { alert('PINs do not match. Please try again.'); return; }
 
@@ -974,13 +974,17 @@
           photoUrl = publicUrl;
         }
 
-        // Upload resume
-        const resumePath = `${cardId}/resume.pdf`;
-        const { error: resumeErr } = await db.storage
-          .from(BUCKET)
-          .upload(resumePath, resumeFile, { upsert: true, contentType: 'application/pdf' });
-        if (resumeErr) throw resumeErr;
-        const { data: { publicUrl: resumeUrl } } = db.storage.from(BUCKET).getPublicUrl(resumePath);
+        // Upload resume (optional)
+        let resumeUrl = null;
+        if (resumeFile) {
+          const resumePath = `${cardId}/resume.pdf`;
+          const { error: resumeErr } = await db.storage
+            .from(BUCKET)
+            .upload(resumePath, resumeFile, { upsert: true, contentType: 'application/pdf' });
+          if (resumeErr) throw resumeErr;
+          const { data: { publicUrl: rUrl } } = db.storage.from(BUCKET).getPublicUrl(resumePath);
+          resumeUrl = rUrl;
+        }
 
         // Parse first / last name
         const parts     = name.trim().split(/\s+/);
@@ -1233,7 +1237,13 @@
         photo.classList.add('hidden');
       }
 
-      document.getElementById('resume-btn').href  = p.resume_url  || '#';
+      const resumeBtn = document.getElementById('resume-btn');
+      if (p.resume_url) {
+        resumeBtn.href = p.resume_url;
+        resumeBtn.style.display = 'flex';
+      } else {
+        resumeBtn.style.display = 'none';
+      }
       document.getElementById('linkedin-btn').href = p.linkedin_url || '#';
 
       document.getElementById('contact-btn').addEventListener('click', function () {
