@@ -1162,6 +1162,8 @@
         if (error) throw error;
 
         const { data: profile } = await db.from('profiles').select('*').eq('id', cardId).single();
+        document.getElementById('edit-save-btn').style.display = 'flex';
+        document.getElementById('edit-saving').style.display   = 'none';
         renderProfile(profile);
         showScreen('profile');
 
