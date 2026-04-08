@@ -38,8 +38,51 @@
       font-weight: 700;
       font-size: 0.9rem;
       transition: background 0.2s, transform 0.1s;
+      cursor: pointer;
+      border: none;
     }
     .nav-cta:hover { background: #3a5ce0; transform: translateY(-1px); }
+
+    /* ── WAITLIST FORM ── */
+    .waitlist-wrap {
+      width: 100%; max-width: 480px;
+      margin: 0 auto;
+    }
+    .waitlist-form {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .waitlist-input {
+      width: 100%; padding: 15px 18px;
+      background: #fff;
+      border: 1.5px solid #e0e4ff;
+      border-radius: 10px;
+      font-size: 0.95rem; color: #1a1a2e;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .waitlist-input:focus { border-color: #4a6cf7; }
+    .waitlist-input::placeholder { color: #aaa; }
+    .waitlist-btn {
+      width: 100%; padding: 16px;
+      background: #4a6cf7; color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 20px rgba(74,108,247,0.35);
+    }
+    .waitlist-btn:hover { background: #3a5ce0; transform: translateY(-1px); }
+    .waitlist-note { color: #aaa; font-size: 0.78rem; text-align: center; }
+    .waitlist-success {
+      text-align: center; padding: 24px;
+      background: #eef1fe; border-radius: 14px;
+      display: none;
+    }
+    .waitlist-success-icon { font-size: 2rem; margin-bottom: 10px; }
+    .waitlist-success h3 { color: #1a1a2e; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .waitlist-success p { color: #666; font-size: 0.88rem; line-height: 1.6; }
 
     /* ── MARQUEE ── */
     .marquee-bar {
@@ -538,7 +581,7 @@
       </svg>
       <span class="logo-text">OneTap</span>
     </a>
-    <a href="#" onclick="return false;" class="nav-cta">Order Now — $25</a>
+    <button class="nav-cta" onclick="scrollToWaitlist()">Join the Waitlist</button>
   </nav>
 
   <!-- TOP MARQUEE -->
@@ -566,9 +609,25 @@
     <span class="hero-badge">NFC Digital Business Cards</span>
     <h1>Tap Once.<br><span>Stand Out</span> Forever.</h1>
     <p class="hero-sub">The modern way for students to network. Share your resume, LinkedIn, and contact info with one tap — no app needed.</p>
-    <div class="hero-buttons">
-      <a href="#" onclick="return false;" class="btn-primary">Get Your Card — $25</a>
+    <div class="hero-buttons" style="margin-bottom:0;">
       <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+    </div>
+
+    <!-- WAITLIST FORM -->
+    <div id="waitlist-section" style="width:100%; max-width:480px; margin-top:40px;">
+      <div class="waitlist-wrap">
+        <div class="waitlist-form" id="waitlist-form">
+          <input class="waitlist-input" type="email" id="wl-email" placeholder="Your email address" autocomplete="email">
+          <input class="waitlist-input" type="tel" id="wl-phone" placeholder="Your phone number (optional)" autocomplete="tel">
+          <button class="waitlist-btn" onclick="joinWaitlist()">Notify Me When We Launch 🚀</button>
+        </div>
+        <p class="waitlist-note">No spam. We'll only reach out when cards are ready to order.</p>
+        <div class="waitlist-success" id="waitlist-success">
+          <div class="waitlist-success-icon">🎉</div>
+          <h3>You're on the list!</h3>
+          <p>We'll text and email you the moment OneTap cards are available to order.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -849,7 +908,7 @@
           <li><span class="check">✓</span> Physical NFC card</li>
           <li><span class="check">✓</span> Free profile updates anytime</li>
         </ul>
-        <a href="#" onclick="return false;" class="btn-order">Order Your Card</a>
+        <button class="btn-order" onclick="scrollToWaitlist()">Join the Waitlist</button>
       </div>
     </div>
   </div>
@@ -857,8 +916,8 @@
   <!-- BOTTOM CTA -->
   <div class="bottom-cta">
     <h2>Stop handing out paper cards.</h2>
-    <p>Join students who are already networking smarter.</p>
-    <a href="#" onclick="return false;" class="btn-primary">Get Your OneTap Card — $25</a>
+    <p>Be the first to know when OneTap launches.</p>
+    <button class="btn-primary" onclick="scrollToWaitlist()">Join the Waitlist →</button>
   </div>
 
   <!-- FOOTER -->
@@ -866,7 +925,43 @@
     <strong>OneTap Cards</strong> &nbsp;·&nbsp; onetapcards.co &nbsp;·&nbsp; &copy; 2026
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const { createClient } = supabase;
+    const db = createClient(
+      'https://ivmxvbqqgvadkumgzmrg.supabase.co',
+      'sb_publishable_WahaRq3N1AEQ7IrCgDVLMw_dIGZBEm0'
+    );
+
+    function scrollToWaitlist() {
+      document.getElementById('waitlist-section').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => document.getElementById('wl-email').focus(), 600);
+    }
+
+    async function joinWaitlist() {
+      const email = document.getElementById('wl-email').value.trim();
+      const phone = document.getElementById('wl-phone').value.trim();
+
+      if (!email) { alert('Please enter your email address.'); return; }
+
+      const btn = document.querySelector('.waitlist-btn');
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      const { error } = await db.from('waitlist').insert({ email, phone });
+
+      if (error) {
+        alert('Something went wrong. Please try again.');
+        btn.textContent = 'Notify Me When We Launch 🚀';
+        btn.disabled = false;
+        return;
+      }
+
+      document.getElementById('waitlist-form').style.display = 'none';
+      document.querySelector('.waitlist-note').style.display  = 'none';
+      document.getElementById('waitlist-success').style.display = 'block';
+    }
+
     function toggleFaq(btn) {
       const answer = btn.nextElementSibling;
       const isOpen = answer.classList.contains('open');
