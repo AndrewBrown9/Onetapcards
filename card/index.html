@@ -1234,11 +1234,13 @@
       }
 
       const resumeBtn = document.getElementById('resume-btn');
-      if (p.resume_url) {
-        resumeBtn.href = p.resume_url;
-        resumeBtn.style.display = 'flex';
+      resumeBtn.href = p.resume_url || '#';
+      if (!p.resume_url) {
+        resumeBtn.style.opacity = '0.4';
+        resumeBtn.style.pointerEvents = 'none';
       } else {
-        resumeBtn.style.display = 'none';
+        resumeBtn.style.opacity = '1';
+        resumeBtn.style.pointerEvents = 'auto';
       }
       const linkedinBtn = document.getElementById('linkedin-btn');
       linkedinBtn.href = p.linkedin_url || '#';
