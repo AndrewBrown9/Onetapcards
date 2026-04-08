@@ -309,13 +309,14 @@
         <div class="progress-seg" id="prog-2"></div>
         <div class="progress-seg" id="prog-3"></div>
         <div class="progress-seg" id="prog-4"></div>
+        <div class="progress-seg" id="prog-5"></div>
       </div>
 
       <div class="wizard-card">
 
         <!-- Step 1: Contact Info -->
         <div class="step active" id="step-1">
-          <p class="step-label">Step 1 of 4</p>
+          <p class="step-label">Step 1 of 5</p>
           <h2 class="step-title">Let's get started 👋</h2>
           <div class="field">
             <label>Full Name</label>
@@ -334,7 +335,7 @@
 
         <!-- Step 2: LinkedIn + Bio -->
         <div class="step" id="step-2">
-          <p class="step-label">Step 2 of 4</p>
+          <p class="step-label">Step 2 of 5</p>
           <h2 class="step-title">Your profile & bio</h2>
           <div class="field">
             <label>LinkedIn Profile URL</label>
@@ -351,7 +352,7 @@
 
         <!-- Step 3: Headshot -->
         <div class="step" id="step-3">
-          <p class="step-label">Step 3 of 4</p>
+          <p class="step-label">Step 3 of 5</p>
           <h2 class="step-title">Add your headshot 📸</h2>
           <div class="upload-area" id="photo-area">
             <input type="file" id="inp-photo" accept="image/*">
@@ -371,7 +372,7 @@
 
         <!-- Step 4: Resume -->
         <div class="step" id="step-4">
-          <p class="step-label">Step 4 of 4</p>
+          <p class="step-label">Step 4 of 5</p>
           <h2 class="step-title">Upload your resume 📄</h2>
           <div class="upload-area" id="resume-area">
             <input type="file" id="inp-resume" accept=".pdf">
@@ -379,10 +380,27 @@
             <div class="upload-hint"><strong>Tap to upload</strong> your resume<br>PDF only</div>
             <div class="upload-filename" id="resume-filename"></div>
           </div>
+          <button class="btn-next" onclick="goStep(5)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+
+        <!-- Step 5: PIN -->
+        <div class="step" id="step-5">
+          <p class="step-label">Step 5 of 5</p>
+          <h2 class="step-title">Create a 4-digit PIN 🔒</h2>
+          <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:20px; line-height:1.6;">You'll use this PIN to edit your profile later. Don't forget it!</p>
+          <div class="field">
+            <label>4-Digit PIN</label>
+            <input type="number" id="inp-pin" placeholder="e.g. 1234" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
+          </div>
+          <div class="field">
+            <label>Confirm PIN</label>
+            <input type="number" id="inp-pin-confirm" placeholder="Re-enter PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
+          </div>
           <button class="btn-submit" id="submit-btn" onclick="submitProfile()">
             <i class="fa-solid fa-check"></i> Create My Card
           </button>
-          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button class="btn-back" onclick="goStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
         </div>
 
         <!-- Submitting -->
@@ -427,6 +445,36 @@
     </div>
   </div>
 
+  <!-- PIN ENTRY -->
+  <div id="screen-pin" class="screen">
+    <div class="wizard-wrap">
+      <div class="wizard-logo">
+        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
+          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
+          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
+        </svg>
+        <div class="wizard-logo-text">OneTap</div>
+        <div class="wizard-logo-sub">Enter your PIN to edit</div>
+      </div>
+      <div class="wizard-card">
+        <h2 class="step-title">Enter your PIN 🔒</h2>
+        <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:20px; line-height:1.6;">Enter the 4-digit PIN you created when setting up your card.</p>
+        <div class="field">
+          <label>4-Digit PIN</label>
+          <input type="number" id="pin-entry" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
+        </div>
+        <div id="pin-error" style="color:#f74a4a; font-size:0.82rem; margin-top:-8px; margin-bottom:8px; display:none;">Incorrect PIN. Please try again.</div>
+        <button class="btn-submit" onclick="verifyPin()">
+          <i class="fa-solid fa-unlock"></i> Unlock
+        </button>
+        <button class="btn-back" onclick="showScreen('profile')">
+          <i class="fa-solid fa-arrow-left"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- EDIT -->
   <div id="screen-edit" class="screen">
     <div class="wizard-wrap">
@@ -443,6 +491,22 @@
         <h2 class="step-title">Update your info</h2>
 
         <div class="field" style="margin-top:4px;">
+          <label>Full Name</label>
+          <input type="text" id="edit-name" placeholder="Jane Smith" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Personal Email</label>
+          <input type="email" id="edit-email" placeholder="jane@email.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="edit-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label>LinkedIn Profile URL</label>
+          <input type="url" id="edit-linkedin" placeholder="https://linkedin.com/in/yourname">
+        </div>
+        <div class="field">
           <label>Bio / Summary</label>
           <textarea id="edit-bio" maxlength="250" placeholder="Tell people about yourself..."></textarea>
           <div class="char-count" id="edit-bio-count">0 / 250</div>
@@ -574,7 +638,7 @@
     }
 
     function updateProgress(step) {
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         const seg = document.getElementById('prog-' + i);
         seg.classList.remove('done', 'active');
         if (i < step)  seg.classList.add('done');
@@ -656,13 +720,17 @@
       const phone      = document.getElementById('inp-phone').value.trim();
       const linkedin   = document.getElementById('inp-linkedin').value.trim();
       const bio        = document.getElementById('inp-bio').value.trim();
+      const pin        = document.getElementById('inp-pin').value.trim();
+      const pinConfirm = document.getElementById('inp-pin-confirm').value.trim();
       const photoFile  = document.getElementById('inp-photo').files[0];
       const resumeFile = document.getElementById('inp-resume').files[0];
 
-      if (!resumeFile) { alert('Please upload your resume PDF.'); return; }
+      if (!resumeFile) { alert('Please upload your resume PDF.'); goStep(4); return; }
+      if (pin.length !== 4 || !/^\d{4}$/.test(pin)) { alert('Please enter a 4-digit PIN.'); return; }
+      if (pin !== pinConfirm) { alert('PINs do not match. Please try again.'); return; }
 
       // Switch to submitting state
-      document.getElementById('step-4').classList.remove('active');
+      document.getElementById('step-5').classList.remove('active');
       document.getElementById('step-submitting').classList.add('active');
 
       try {
@@ -697,6 +765,7 @@
           id:            cardId,
           name,
           bio,
+          pin,
           linkedin_url:  linkedin,
           photo_url:     photoUrl,
           resume_url:    resumeUrl,
@@ -721,7 +790,7 @@
         console.error(err);
         alert('Something went wrong: ' + (err.message || 'Unknown error') + '\n\nPlease try again.');
         document.getElementById('step-submitting').classList.remove('active');
-        document.getElementById('step-4').classList.add('active');
+        document.getElementById('step-5').classList.add('active');
       }
     }
 
@@ -799,10 +868,33 @@
       el.style.display = 'block';
     });
 
-    // ── Show edit screen ─────────────────────────────────────────────────────
+    // ── Show PIN screen ──────────────────────────────────────────────────────
     function showEditScreen() {
-      document.getElementById('edit-bio').value = currentProfile.bio || '';
-      const len = (currentProfile.bio || '').length;
+      document.getElementById('pin-entry').value = '';
+      document.getElementById('pin-error').style.display = 'none';
+      showScreen('pin');
+    }
+
+    // ── Verify PIN ───────────────────────────────────────────────────────────
+    function verifyPin() {
+      const entered = document.getElementById('pin-entry').value.trim();
+      if (entered === currentProfile.pin) {
+        document.getElementById('pin-error').style.display = 'none';
+        openEditForm();
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+        document.getElementById('pin-entry').value = '';
+      }
+    }
+
+    function openEditForm() {
+      const p = currentProfile;
+      document.getElementById('edit-name').value    = p.name || '';
+      document.getElementById('edit-email').value   = p.contact_email || '';
+      document.getElementById('edit-phone').value   = p.contact_phone || '';
+      document.getElementById('edit-linkedin').value = p.linkedin_url || '';
+      document.getElementById('edit-bio').value     = p.bio || '';
+      const len = (p.bio || '').length;
       document.getElementById('edit-bio-count').textContent = len + ' / 250';
       document.getElementById('edit-photo-area').style.display = 'block';
       document.getElementById('edit-crop-wrap').style.display  = 'none';
@@ -814,15 +906,34 @@
 
     // ── Save edits ───────────────────────────────────────────────────────────
     async function saveEdits() {
+      const name          = document.getElementById('edit-name').value.trim();
+      const email         = document.getElementById('edit-email').value.trim();
+      const phone         = document.getElementById('edit-phone').value.trim();
+      const linkedin      = document.getElementById('edit-linkedin').value.trim();
       const bio           = document.getElementById('edit-bio').value.trim();
       const newPhotoFile  = document.getElementById('edit-inp-photo').files[0];
       const newResumeFile = document.getElementById('edit-inp-resume').files[0];
 
+      if (!name)     { alert('Name cannot be empty.'); return; }
+      if (!linkedin) { alert('LinkedIn URL cannot be empty.'); return; }
+
       document.getElementById('edit-save-btn').style.display = 'none';
       document.getElementById('edit-saving').style.display   = 'block';
 
+      const parts     = name.split(/\s+/);
+      const firstName = parts[0];
+      const lastName  = parts.slice(1).join(' ');
+
       try {
-        const updates = { bio };
+        const updates = {
+          name,
+          bio,
+          linkedin_url:  linkedin,
+          contact_first: firstName,
+          contact_last:  lastName,
+          contact_phone: phone,
+          contact_email: email
+        };
 
         if (newPhotoFile) {
           const blob = await getEditCroppedBlob();
