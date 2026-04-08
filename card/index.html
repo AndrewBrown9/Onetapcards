@@ -675,15 +675,15 @@
   <script>
     // ── Themes ──────────────────────────────────────────────────────────────
     const THEMES = {
-      slate:    { label: 'Slate',    gradient: 'linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%)' },
-      midnight: { label: 'Midnight', gradient: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' },
-      forest:   { label: 'Forest',   gradient: 'linear-gradient(135deg, #1a3a2a 0%, #2d5a40 50%, #4a7a5a 100%)' },
-      carbon:   { label: 'Carbon',   gradient: 'linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%)' },
-      crimson:  { label: 'Crimson',  gradient: 'linear-gradient(135deg, #4a0a1a 0%, #7a2030 50%, #a04050 100%)' },
-      dusk:     { label: 'Dusk',     gradient: 'linear-gradient(135deg, #3d2b1f 0%, #6b4c35 50%, #9a7055 100%)' },
+      mist:     { label: 'Mist',     gradient: 'linear-gradient(135deg, #6b8fa8 0%, #8aacc0 40%, #a8c4d8 100%)' },
+      slate:    { label: 'Slate',    gradient: 'linear-gradient(135deg, #607890 0%, #7890a8 40%, #90a8c0 100%)' },
+      sage:     { label: 'Sage',     gradient: 'linear-gradient(135deg, #5a7860 0%, #789878 40%, #90b090 100%)' },
+      pebble:   { label: 'Pebble',   gradient: 'linear-gradient(135deg, #7a7068 0%, #988878 40%, #b0a090 100%)' },
+      rose:     { label: 'Rose',     gradient: 'linear-gradient(135deg, #9a7080 0%, #b88898 40%, #d0a8b8 100%)' },
+      lavender: { label: 'Lavender', gradient: 'linear-gradient(135deg, #7868a0 0%, #9888b8 40%, #b0a0d0 100%)' },
     };
 
-    let selectedTheme = 'slate';
+    let selectedTheme = 'mist';
 
     function buildSwatches(containerId) {
       const container = document.getElementById(containerId);
@@ -1126,7 +1126,7 @@
       currentProfile = p;
       document.title = p.name + ' — OneTap Card';
 
-      const theme = THEMES[p.theme] || THEMES['slate'];
+      const theme = THEMES[p.theme] || THEMES['mist'];
       document.getElementById('screen-profile').style.background = theme.gradient;
 
       document.getElementById('profile-name').textContent = p.name;
