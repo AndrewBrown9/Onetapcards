@@ -382,6 +382,26 @@
       display: none;
     }
 
+    /* ---- TEXT COLOR TOGGLE ---- */
+    .text-color-toggle {
+      display: flex;
+      gap: 8px;
+    }
+    .text-color-btn {
+      flex: 1; padding: 9px;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      font-size: 0.82rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      color: var(--gray-600);
+    }
+    .text-color-btn.active {
+      border-color: var(--black);
+      background: var(--black);
+      color: var(--white);
+    }
+
     /* ---- THEME PICKER ---- */
     .theme-picker-label {
       color: var(--gray-800);
@@ -477,6 +497,13 @@
           <div class="field" style="margin-top:4px;">
             <span class="theme-picker-label">Background Style</span>
             <div class="theme-swatches" id="setup-swatches"></div>
+          </div>
+          <div class="field">
+            <span class="theme-picker-label">Name & Bio Text Color</span>
+            <div class="text-color-toggle">
+              <button class="text-color-btn active" id="setup-tc-white" onclick="setTextColor('white', 'setup')">White</button>
+              <button class="text-color-btn" id="setup-tc-black" onclick="setTextColor('black', 'setup')">Black</button>
+            </div>
           </div>
           <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
           <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
@@ -664,6 +691,13 @@
           <span class="theme-picker-label">Background Style</span>
           <div class="theme-swatches" id="edit-swatches"></div>
         </div>
+        <div class="field">
+          <span class="theme-picker-label">Name & Bio Text Color</span>
+          <div class="text-color-toggle">
+            <button class="text-color-btn active" id="edit-tc-white" onclick="setTextColor('white', 'edit')">White</button>
+            <button class="text-color-btn" id="edit-tc-black" onclick="setTextColor('black', 'edit')">Black</button>
+          </div>
+        </div>
 
         <div id="edit-saving" style="display:none; text-align:center; padding:12px 0;">
           <div class="loader" style="margin:0 auto 12px;"></div>
@@ -690,6 +724,14 @@
     };
 
     let selectedTheme = 'mist';
+    let selectedTextColor = 'white';
+
+    function setTextColor(color, context) {
+      selectedTextColor = color;
+      const prefix = context === 'edit' ? 'edit' : 'setup';
+      document.getElementById(prefix + '-tc-white').classList.toggle('active', color === 'white');
+      document.getElementById(prefix + '-tc-black').classList.toggle('active', color === 'black');
+    }
 
     function buildSwatches(containerId) {
       const container = document.getElementById(containerId);
@@ -923,6 +965,7 @@
           bio,
           pin,
           theme:         selectedTheme,
+          text_color:    selectedTextColor,
           linkedin_url:  linkedin,
           photo_url:     photoUrl,
           resume_url:    resumeUrl,
@@ -1058,9 +1101,12 @@
       document.getElementById('edit-resume-filename').style.display = 'none';
       document.getElementById('edit-inp-photo').value  = '';
       document.getElementById('edit-inp-resume').value = '';
-      selectedTheme = p.theme || 'slate';
+      selectedTheme = p.theme || 'mist';
+      selectedTextColor = p.text_color || 'white';
       buildSwatches('setup-swatches');
       buildSwatches('edit-swatches');
+      setTextColor(selectedTextColor, 'setup');
+      setTextColor(selectedTextColor, 'edit');
       showScreen('edit');
     }
 
@@ -1089,6 +1135,7 @@
           name,
           bio,
           theme:         selectedTheme,
+          text_color:    selectedTextColor,
           linkedin_url:  linkedin,
           contact_first: firstName,
           contact_last:  lastName,
@@ -1134,6 +1181,10 @@
 
       const theme = THEMES[p.theme] || THEMES['mist'];
       document.getElementById('screen-profile').style.background = theme.gradient;
+
+      const tc = p.text_color || 'white';
+      document.getElementById('profile-name').style.color = tc;
+      document.getElementById('profile-bio').style.color  = tc === 'black' ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)';
 
       document.getElementById('profile-name').textContent = p.name;
       document.getElementById('profile-bio').textContent  = p.bio || '';
