@@ -375,6 +375,31 @@
       margin-bottom: 10px;
       display: none;
     }
+
+    /* ---- THEME PICKER ---- */
+    .theme-picker-label {
+      color: var(--gray-800);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: 0.01em;
+      display: block;
+    }
+    .theme-swatches {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .theme-swatch {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .theme-swatch:hover  { transform: scale(1.1); }
+    .theme-swatch.active { border-color: var(--black); transform: scale(1.1); }
   </style>
 </head>
 <body>
@@ -442,6 +467,10 @@
             <label>Short Bio</label>
             <textarea id="inp-bio" placeholder="Finance student at USF. Interested in investment banking. Graduating May 2026." maxlength="250"></textarea>
             <div class="char-count" id="bio-count">0 / 250</div>
+          </div>
+          <div class="field" style="margin-top:4px;">
+            <span class="theme-picker-label">Background Style</span>
+            <div class="theme-swatches" id="setup-swatches"></div>
           </div>
           <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
           <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
@@ -625,6 +654,11 @@
           </div>
         </div>
 
+        <div class="field">
+          <span class="theme-picker-label">Background Style</span>
+          <div class="theme-swatches" id="edit-swatches"></div>
+        </div>
+
         <div id="edit-saving" style="display:none; text-align:center; padding:12px 0;">
           <div class="loader" style="margin:0 auto 12px;"></div>
           <div style="color:var(--gray-400); font-size:0.85rem; font-weight:500;">Saving changes...</div>
@@ -639,6 +673,37 @@
   </div>
 
   <script>
+    // ── Themes ──────────────────────────────────────────────────────────────
+    const THEMES = {
+      slate:    { label: 'Slate',    gradient: 'linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%)' },
+      midnight: { label: 'Midnight', gradient: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' },
+      forest:   { label: 'Forest',   gradient: 'linear-gradient(135deg, #1a3a2a 0%, #2d5a40 50%, #4a7a5a 100%)' },
+      carbon:   { label: 'Carbon',   gradient: 'linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 50%, #3a3a3c 100%)' },
+      crimson:  { label: 'Crimson',  gradient: 'linear-gradient(135deg, #4a0a1a 0%, #7a2030 50%, #a04050 100%)' },
+      dusk:     { label: 'Dusk',     gradient: 'linear-gradient(135deg, #3d2b1f 0%, #6b4c35 50%, #9a7055 100%)' },
+    };
+
+    let selectedTheme = 'slate';
+
+    function buildSwatches(containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      Object.keys(THEMES).forEach(key => {
+        const s = document.createElement('div');
+        s.className = 'theme-swatch' + (key === selectedTheme ? ' active' : '');
+        s.title = THEMES[key].label;
+        s.style.background = THEMES[key].gradient;
+        s.addEventListener('click', () => {
+          selectedTheme = key;
+          document.querySelectorAll('.theme-swatch').forEach(el => el.classList.remove('active'));
+          document.querySelectorAll('.theme-swatch').forEach(el => {
+            if (el.title === THEMES[key].label) el.classList.add('active');
+          });
+        });
+        container.appendChild(s);
+      });
+    }
+
     // ── Config ──────────────────────────────────────────────────────────────
     const SUPABASE_URL = 'https://ivmxvbqqgvadkumgzmrg.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_WahaRq3N1AEQ7IrCgDVLMw_dIGZBEm0';
@@ -851,6 +916,7 @@
           name,
           bio,
           pin,
+          theme:         selectedTheme,
           linkedin_url:  linkedin,
           photo_url:     photoUrl,
           resume_url:    resumeUrl,
@@ -986,6 +1052,9 @@
       document.getElementById('edit-resume-filename').style.display = 'none';
       document.getElementById('edit-inp-photo').value  = '';
       document.getElementById('edit-inp-resume').value = '';
+      selectedTheme = p.theme || 'slate';
+      buildSwatches('setup-swatches');
+      buildSwatches('edit-swatches');
       showScreen('edit');
     }
 
@@ -1013,6 +1082,7 @@
         const updates = {
           name,
           bio,
+          theme:         selectedTheme,
           linkedin_url:  linkedin,
           contact_first: firstName,
           contact_last:  lastName,
@@ -1056,6 +1126,9 @@
       currentProfile = p;
       document.title = p.name + ' — OneTap Card';
 
+      const theme = THEMES[p.theme] || THEMES['slate'];
+      document.getElementById('screen-profile').style.background = theme.gradient;
+
       document.getElementById('profile-name').textContent = p.name;
       document.getElementById('profile-bio').textContent  = p.bio || '';
 
@@ -1094,6 +1167,8 @@
     }
 
     // ── Go ───────────────────────────────────────────────────────────────────
+    buildSwatches('setup-swatches');
+    buildSwatches('edit-swatches');
     init();
   </script>
 
