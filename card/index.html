@@ -499,10 +499,17 @@
             <div class="theme-swatches" id="setup-swatches"></div>
           </div>
           <div class="field">
-            <span class="theme-picker-label">Name & Bio Text Color</span>
+            <span class="theme-picker-label">Name Color</span>
             <div class="text-color-toggle">
-              <button class="text-color-btn active" id="setup-tc-white" onclick="setTextColor('white', 'setup')">White</button>
-              <button class="text-color-btn" id="setup-tc-black" onclick="setTextColor('black', 'setup')">Black</button>
+              <button class="text-color-btn active" id="setup-nc-white" onclick="setColor('name','white','setup')">White</button>
+              <button class="text-color-btn" id="setup-nc-black" onclick="setColor('name','black','setup')">Black</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="theme-picker-label">Bio Color</span>
+            <div class="text-color-toggle">
+              <button class="text-color-btn active" id="setup-bc-white" onclick="setColor('bio','white','setup')">White</button>
+              <button class="text-color-btn" id="setup-bc-black" onclick="setColor('bio','black','setup')">Black</button>
             </div>
           </div>
           <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
@@ -692,10 +699,17 @@
           <div class="theme-swatches" id="edit-swatches"></div>
         </div>
         <div class="field">
-          <span class="theme-picker-label">Name & Bio Text Color</span>
+          <span class="theme-picker-label">Name Color</span>
           <div class="text-color-toggle">
-            <button class="text-color-btn active" id="edit-tc-white" onclick="setTextColor('white', 'edit')">White</button>
-            <button class="text-color-btn" id="edit-tc-black" onclick="setTextColor('black', 'edit')">Black</button>
+            <button class="text-color-btn active" id="edit-nc-white" onclick="setColor('name','white','edit')">White</button>
+            <button class="text-color-btn" id="edit-nc-black" onclick="setColor('name','black','edit')">Black</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="theme-picker-label">Bio Color</span>
+          <div class="text-color-toggle">
+            <button class="text-color-btn active" id="edit-bc-white" onclick="setColor('bio','white','edit')">White</button>
+            <button class="text-color-btn" id="edit-bc-black" onclick="setColor('bio','black','edit')">Black</button>
           </div>
         </div>
 
@@ -724,13 +738,16 @@
     };
 
     let selectedTheme = 'mist';
-    let selectedTextColor = 'white';
+    let selectedNameColor = 'white';
+    let selectedBioColor  = 'white';
 
-    function setTextColor(color, context) {
-      selectedTextColor = color;
+    function setColor(type, color, context) {
       const prefix = context === 'edit' ? 'edit' : 'setup';
-      document.getElementById(prefix + '-tc-white').classList.toggle('active', color === 'white');
-      document.getElementById(prefix + '-tc-black').classList.toggle('active', color === 'black');
+      const key = type === 'name' ? 'nc' : 'bc';
+      if (type === 'name') selectedNameColor = color;
+      else                 selectedBioColor  = color;
+      document.getElementById(prefix + '-' + key + '-white').classList.toggle('active', color === 'white');
+      document.getElementById(prefix + '-' + key + '-black').classList.toggle('active', color === 'black');
     }
 
     function buildSwatches(containerId) {
@@ -965,7 +982,8 @@
           bio,
           pin,
           theme:         selectedTheme,
-          text_color:    selectedTextColor,
+          name_color:    selectedNameColor,
+          bio_color:     selectedBioColor,
           linkedin_url:  linkedin,
           photo_url:     photoUrl,
           resume_url:    resumeUrl,
@@ -1101,12 +1119,15 @@
       document.getElementById('edit-resume-filename').style.display = 'none';
       document.getElementById('edit-inp-photo').value  = '';
       document.getElementById('edit-inp-resume').value = '';
-      selectedTheme = p.theme || 'mist';
-      selectedTextColor = p.text_color || 'white';
+      selectedTheme     = p.theme      || 'mist';
+      selectedNameColor = p.name_color || 'white';
+      selectedBioColor  = p.bio_color  || 'white';
       buildSwatches('setup-swatches');
       buildSwatches('edit-swatches');
-      setTextColor(selectedTextColor, 'setup');
-      setTextColor(selectedTextColor, 'edit');
+      setColor('name', selectedNameColor, 'setup');
+      setColor('name', selectedNameColor, 'edit');
+      setColor('bio',  selectedBioColor,  'setup');
+      setColor('bio',  selectedBioColor,  'edit');
       showScreen('edit');
     }
 
@@ -1135,7 +1156,8 @@
           name,
           bio,
           theme:         selectedTheme,
-          text_color:    selectedTextColor,
+          name_color:    selectedNameColor,
+          bio_color:     selectedBioColor,
           linkedin_url:  linkedin,
           contact_first: firstName,
           contact_last:  lastName,
@@ -1184,9 +1206,10 @@
       const theme = THEMES[p.theme] || THEMES['mist'];
       document.getElementById('screen-profile').style.background = theme.gradient;
 
-      const tc = p.text_color || 'white';
-      document.getElementById('profile-name').style.color = tc;
-      document.getElementById('profile-bio').style.color  = tc === 'black' ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)';
+      const nc = p.name_color || 'white';
+      const bc = p.bio_color  || 'white';
+      document.getElementById('profile-name').style.color = nc;
+      document.getElementById('profile-bio').style.color  = bc === 'black' ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)';
 
       document.getElementById('profile-name').textContent = p.name;
       document.getElementById('profile-bio').textContent  = p.bio || '';
