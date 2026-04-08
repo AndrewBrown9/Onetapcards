@@ -518,6 +518,7 @@
           </div>
           <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
           <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
+          <p style="text-align:center; margin-top:10px;"><button onclick="goStep(3)" style="background:none; border:none; color:var(--gray-400); font-size:0.78rem; font-weight:500; font-family:inherit; cursor:pointer; text-decoration:underline; text-underline-offset:3px;">Skip LinkedIn for now — add later</button></p>
         </div>
 
         <!-- Step 3: Headshot -->
@@ -851,11 +852,7 @@
             alert('Please enter your phone number.'); return;
           }
         }
-        if (currentStep === 2) {
-          if (!document.getElementById('inp-linkedin').value.trim()) {
-            alert('Please enter your LinkedIn URL.'); return;
-          }
-        }
+        // LinkedIn is optional — no validation needed
       }
 
       document.getElementById('step-' + currentStep).classList.remove('active');
@@ -1157,8 +1154,7 @@
       const newPhotoFile  = document.getElementById('edit-inp-photo').files[0];
       const newResumeFile = document.getElementById('edit-inp-resume').files[0];
 
-      if (!name)     { alert('Name cannot be empty.'); return; }
-      if (!linkedin) { alert('LinkedIn URL cannot be empty.'); return; }
+      if (!name) { alert('Name cannot be empty.'); return; }
 
       document.getElementById('edit-save-btn').style.display = 'none';
       document.getElementById('edit-saving').style.display   = 'block';
@@ -1244,7 +1240,15 @@
       } else {
         resumeBtn.style.display = 'none';
       }
-      document.getElementById('linkedin-btn').href = p.linkedin_url || '#';
+      const linkedinBtn = document.getElementById('linkedin-btn');
+      linkedinBtn.href = p.linkedin_url || '#';
+      if (!p.linkedin_url) {
+        linkedinBtn.style.opacity = '0.4';
+        linkedinBtn.style.pointerEvents = 'none';
+      } else {
+        linkedinBtn.style.opacity = '1';
+        linkedinBtn.style.pointerEvents = 'auto';
+      }
 
       document.getElementById('contact-btn').addEventListener('click', function () {
         const c = p;
