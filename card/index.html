@@ -5,15 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>OneTap Card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f3f3f3;
+      --gray-200: #e5e5e5;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --blue: #1d4ed8;
+      --blue-hover: #1e40af;
+      --red: #dc2626;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #2d3561 60%, #3a5270 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ---- SCREENS ---- */
@@ -24,255 +43,338 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 40px 20px 60px;
+      padding: 48px 20px 64px;
     }
 
     /* ---- LOADING ---- */
     .loader {
-      width: 44px; height: 44px;
-      border: 4px solid rgba(255,255,255,0.15);
-      border-top-color: #4a6cf7;
+      width: 36px; height: 36px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--black);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 0.9rem; }
+    .loading-text {
+      color: var(--gray-400);
+      margin-top: 16px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
 
     /* ---- ERROR ---- */
-    .error-icon { font-size: 3rem; margin-bottom: 16px; }
-    .error-title { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
-    .error-sub { color: rgba(255,255,255,0.55); text-align: center; font-size: 0.9rem; line-height: 1.6; }
+    .error-icon { font-size: 2.5rem; margin-bottom: 20px; color: var(--gray-400); }
+    .error-title { color: var(--black); font-size: 1.375rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+    .error-sub { color: var(--gray-600); text-align: center; font-size: 0.9rem; line-height: 1.65; }
 
     /* ---- SETUP WIZARD ---- */
-    .wizard-wrap { width: 100%; max-width: 460px; }
+    .wizard-wrap { width: 100%; max-width: 440px; }
 
-    .wizard-logo { text-align: center; margin-bottom: 28px; }
-    .wizard-logo svg { display: block; margin: 0 auto 10px; }
-    .wizard-logo-text { color: #fff; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-    .wizard-logo-sub { color: rgba(255,255,255,0.5); font-size: 0.82rem; margin-top: 4px; }
+    /* Logo / wordmark */
+    .wizard-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .wizard-wordmark {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--black);
+    }
+    .wizard-wordmark span { color: var(--blue); }
+    .wizard-logo-sub {
+      color: var(--gray-400);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: 5px;
+      letter-spacing: 0.01em;
+    }
 
-    .progress-bar { display: flex; gap: 6px; margin-bottom: 24px; }
+    /* Progress */
+    .progress-bar { display: flex; gap: 5px; margin-bottom: 24px; }
     .progress-seg {
-      height: 4px; flex: 1; border-radius: 2px;
-      background: rgba(255,255,255,0.15);
+      height: 3px; flex: 1; border-radius: 99px;
+      background: var(--gray-200);
       transition: background 0.3s;
     }
-    .progress-seg.done { background: #4a6cf7; }
-    .progress-seg.active { background: rgba(74,108,247,0.5); }
+    .progress-seg.done   { background: var(--black); }
+    .progress-seg.active { background: var(--gray-400); }
 
+    /* Wizard card */
     .wizard-card {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 22px;
-      padding: 28px 22px;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 28px 24px 24px;
     }
 
     .step { display: none; }
     .step.active { display: block; }
 
     .step-label {
-      color: rgba(255,255,255,0.45);
-      font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      margin-bottom: 5px;
+      color: var(--gray-400);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
-    .step-title { color: #fff; font-size: 1.25rem; font-weight: 700; margin-bottom: 22px; line-height: 1.3; }
+    .step-title {
+      color: var(--black);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
 
+    /* Fields */
     .field { margin-bottom: 14px; }
     .field label {
-      display: block; color: rgba(255,255,255,0.75);
-      font-size: 0.82rem; font-weight: 600; margin-bottom: 6px;
+      display: block;
+      color: var(--gray-800);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
     }
-    .field input {
-      width: 100%; padding: 13px 15px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: #fff; font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      -webkit-appearance: none;
-    }
-    .field input::placeholder { color: rgba(255,255,255,0.3); }
-    .field input:focus { border-color: #4a6cf7; background: rgba(255,255,255,0.15); }
-
+    .field input,
     .field textarea {
-      width: 100%; padding: 13px 15px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: #fff; font-size: 0.95rem;
-      outline: none; resize: none; height: 100px;
+      width: 100%;
+      padding: 11px 13px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      color: var(--black);
+      font-size: 0.9375rem;
       font-family: inherit;
-      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
       -webkit-appearance: none;
     }
-    .field textarea::placeholder { color: rgba(255,255,255,0.3); }
-    .field textarea:focus { border-color: #4a6cf7; background: rgba(255,255,255,0.15); }
-    .char-count { color: rgba(255,255,255,0.4); font-size: 0.75rem; text-align: right; margin-top: 4px; }
-    .char-count.near { color: #f7a94a; }
-    .char-count.over { color: #f74a4a; }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--gray-400); }
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--black);
+      background: var(--white);
+    }
+    .field textarea { resize: none; height: 96px; }
 
-    .optional { color: rgba(255,255,255,0.35); font-size: 0.72rem; font-weight: 400; margin-left: 4px; }
+    .char-count {
+      color: var(--gray-400);
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-align: right;
+      margin-top: 5px;
+    }
+    .char-count.near  { color: #d97706; }
+    .char-count.over  { color: var(--red); }
+
+    .optional {
+      color: var(--gray-400);
+      font-size: 0.7rem;
+      font-weight: 400;
+      margin-left: 4px;
+    }
 
     /* Upload areas */
     .upload-area {
-      border: 2px dashed rgba(255,255,255,0.25);
-      border-radius: 14px;
-      padding: 28px 20px;
+      border: 1.5px dashed var(--gray-200);
+      border-radius: 10px;
+      padding: 24px 20px;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.15s, background 0.15s;
       position: relative;
-      margin-bottom: 4px;
     }
-    .upload-area:hover, .upload-area.drag-over {
-      border-color: #4a6cf7;
-      background: rgba(74,108,247,0.08);
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: var(--black);
+      background: var(--gray-50);
     }
     .upload-area input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+      position: absolute; inset: 0; opacity: 0;
+      cursor: pointer; width: 100%; height: 100%;
     }
-
-    .photo-preview {
-      width: 90px; height: 90px;
-      border-radius: 50%; object-fit: cover;
-      border: 3px solid rgba(255,255,255,0.6);
-      margin: 0 auto 12px;
-      display: none;
+    .upload-icon {
+      font-size: 1.5rem;
+      color: var(--gray-400);
+      margin-bottom: 8px;
     }
-    .upload-icon { font-size: 2.2rem; margin-bottom: 10px; }
-    .upload-hint { color: rgba(255,255,255,0.55); font-size: 0.83rem; line-height: 1.5; }
-    .upload-hint strong { color: rgba(255,255,255,0.9); }
+    .upload-hint {
+      color: var(--gray-600);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+    .upload-hint strong { color: var(--black); font-weight: 600; }
     .upload-filename {
-      color: #fff; font-size: 0.85rem; font-weight: 600;
-      margin-top: 8px; display: none;
+      color: var(--black);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-top: 8px;
+      display: none;
     }
 
     /* Crop UI */
     .crop-wrap { display: none; text-align: center; margin-bottom: 4px; }
     .crop-circle {
-      width: 220px; height: 220px;
+      width: 200px; height: 200px;
       border-radius: 50%; overflow: hidden;
-      border: 3px solid rgba(255,255,255,0.6);
+      border: 2px solid var(--gray-200);
       margin: 0 auto; position: relative;
       cursor: grab; user-select: none; -webkit-user-select: none;
     }
     .crop-circle:active { cursor: grabbing; }
     .crop-img { position: absolute; pointer-events: none; }
-    .crop-hint { color: rgba(255,255,255,0.5); font-size: 0.78rem; margin-top: 10px; }
+    .crop-hint {
+      color: var(--gray-400);
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 10px;
+    }
     .change-photo-btn {
       background: none; border: none;
-      color: rgba(255,255,255,0.45); font-size: 0.78rem;
+      color: var(--gray-400); font-size: 0.75rem; font-weight: 500;
       cursor: pointer; margin-top: 6px; padding: 4px 0;
       display: block; width: 100%; text-align: center;
+      font-family: inherit;
     }
-    .change-photo-btn:hover { color: rgba(255,255,255,0.8); }
+    .change-photo-btn:hover { color: var(--black); }
 
     /* Buttons */
-    .btn-next, .btn-submit {
-      width: 100%; padding: 15px;
-      background: #4a6cf7; color: #fff;
-      border: none; border-radius: 12px;
-      font-size: 1rem; font-weight: 700;
+    .btn-next,
+    .btn-submit {
+      width: 100%; padding: 13px;
+      background: var(--black); color: var(--white);
+      border: none; border-radius: 8px;
+      font-size: 0.9375rem; font-weight: 600;
+      font-family: inherit;
       cursor: pointer; margin-top: 18px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: background 0.2s, transform 0.1s;
+      transition: opacity 0.15s, transform 0.1s;
       -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
     }
-    .btn-next:hover, .btn-submit:hover { background: #3a5ce0; }
-    .btn-next:active, .btn-submit:active { transform: scale(0.98); }
-    .btn-next:disabled, .btn-submit:disabled { background: rgba(74,108,247,0.4); cursor: not-allowed; }
+    .btn-next:hover,
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-next:active,
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-next:disabled,
+    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
 
     .btn-back {
       background: none; border: none;
-      color: rgba(255,255,255,0.45);
-      font-size: 0.83rem; cursor: pointer;
+      color: var(--gray-400);
+      font-size: 0.82rem; font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
       padding: 12px 0 0;
       display: flex; align-items: center; gap: 6px;
       -webkit-tap-highlight-color: transparent;
     }
-    .btn-back:hover { color: rgba(255,255,255,0.75); }
+    .btn-back:hover { color: var(--black); }
 
-    /* Submitting state */
+    /* Submitting */
     .submitting-inner { text-align: center; }
     .submitting-inner .loader { margin: 0 auto 20px; }
-    .submitting-title { color: #fff; font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
-    .submitting-sub { color: rgba(255,255,255,0.55); font-size: 0.88rem; }
+    .submitting-title {
+      color: var(--black); font-size: 1.1rem; font-weight: 700;
+      margin-bottom: 6px; letter-spacing: -0.02em;
+    }
+    .submitting-sub { color: var(--gray-400); font-size: 0.85rem; line-height: 1.6; }
 
     /* ---- PROFILE SCREEN ---- */
     #screen-profile {
-      background: linear-gradient(135deg, #3a5270 0%, #5a7290 40%, #8a9eb8 100%);
+      background: var(--black);
+      color: var(--white);
     }
 
     .card-wrapper {
-      width: 100%; max-width: 480px;
+      width: 100%; max-width: 420px;
       display: flex; flex-direction: column; align-items: center;
     }
 
     .profile-photo {
-      width: 110px; height: 110px;
+      width: 96px; height: 96px;
       border-radius: 50%;
-      border: 3px solid rgba(255,255,255,0.7);
+      border: 2px solid rgba(255,255,255,0.15);
       object-fit: cover;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .profile-photo.hidden { display: none; }
 
     .p-name {
-      color: #fff; font-size: 2.4rem; font-weight: 700;
-      text-align: center; margin-bottom: 14px; line-height: 1.1;
+      color: var(--white);
+      font-size: 2rem; font-weight: 700;
+      text-align: center; margin-bottom: 10px; line-height: 1.1;
+      letter-spacing: -0.035em;
     }
     .p-tagline {
-      color: rgba(255,255,255,0.85); font-size: 0.95rem;
-      text-align: center; line-height: 1.6;
-      max-width: 340px; margin-bottom: 36px;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.875rem;
+      text-align: center; line-height: 1.65;
+      max-width: 320px; margin-bottom: 32px;
     }
 
     .links-card {
       width: 100%;
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 24px 20px;
-      display: flex; flex-direction: column; gap: 14px;
+      display: flex; flex-direction: column; gap: 10px;
     }
 
     .pbtn {
       display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 18px 22px;
-      border-radius: 12px; border: none; cursor: pointer;
-      font-size: 1rem; font-weight: 500;
-      text-decoration: none;
+      width: 100%; padding: 16px 20px;
+      border-radius: 10px; border: none; cursor: pointer;
+      font-size: 0.9375rem; font-weight: 600; font-family: inherit;
+      text-decoration: none; letter-spacing: -0.01em;
       transition: opacity 0.15s, transform 0.1s;
       -webkit-tap-highlight-color: transparent;
     }
-    .pbtn:active { opacity: 0.85; transform: scale(0.98); }
-    .pbtn-blue { background: #4a6cf7; color: #fff; }
-    .pbtn-white { background: #fff; color: #4a6cf7; }
-    .pbtn-icon { font-size: 1.1rem; }
-    .pbtn-blue .pbtn-icon { color: #fff; }
-    .pbtn-white .pbtn-icon { color: #4a6cf7; }
+    .pbtn:active { opacity: 0.8; transform: scale(0.99); }
 
-    .powered-by { margin-top: 24px; text-align: center; }
+    .pbtn-blue  { background: var(--white); color: var(--black); }
+    .pbtn-white { background: rgba(255,255,255,0.08); color: var(--white); border: 1px solid rgba(255,255,255,0.12); }
+
+    .pbtn-icon { font-size: 1rem; }
+    .pbtn-blue  .pbtn-icon { color: var(--black); }
+    .pbtn-white .pbtn-icon { color: rgba(255,255,255,0.6); }
+
+    .powered-by { margin-top: 28px; text-align: center; }
     .powered-by a {
-      color: rgba(255,255,255,0.45); font-size: 0.78rem;
+      color: rgba(255,255,255,0.25);
+      font-size: 0.75rem; font-weight: 500;
       text-decoration: none; transition: color 0.2s;
+      letter-spacing: 0.01em;
     }
-    .powered-by a:hover { color: rgba(255,255,255,0.8); }
-    .powered-by a span { color: rgba(255,255,255,0.85); font-weight: 600; }
+    .powered-by a:hover { color: rgba(255,255,255,0.6); }
+    .powered-by a span { color: rgba(255,255,255,0.5); font-weight: 600; }
 
     .edit-profile-btn {
-      margin-top: 16px; background: none; border: none;
-      color: rgba(255,255,255,0.35); font-size: 0.75rem;
-      cursor: pointer; text-decoration: underline;
+      margin-top: 14px; background: none; border: none;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.72rem; font-weight: 500; font-family: inherit;
+      cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
       -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s;
     }
-    .edit-profile-btn:hover { color: rgba(255,255,255,0.6); }
+    .edit-profile-btn:hover { color: rgba(255,255,255,0.5); }
+
+    /* ---- PIN / EDIT screens share wizard styling ---- */
+    #screen-pin,
+    #screen-edit {
+      background: var(--gray-50);
+    }
+
+    .pin-error {
+      color: var(--red);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-top: -8px;
+      margin-bottom: 10px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -285,7 +387,7 @@
 
   <!-- ERROR -->
   <div id="screen-error" class="screen">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
     <h1 class="error-title">Invalid Card</h1>
     <p class="error-sub">This card link isn't valid.<br>Please contact OneTap support.</p>
   </div>
@@ -295,13 +397,8 @@
     <div class="wizard-wrap">
 
       <div class="wizard-logo">
-        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
-          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
-          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
-        </svg>
-        <div class="wizard-logo-text">OneTap</div>
-        <div class="wizard-logo-sub">Let's build your digital card</div>
+        <div class="wizard-wordmark">One<span>Tap</span></div>
+        <div class="wizard-logo-sub">Set up your digital card</div>
       </div>
 
       <div class="progress-bar">
@@ -317,7 +414,7 @@
         <!-- Step 1: Contact Info -->
         <div class="step active" id="step-1">
           <p class="step-label">Step 1 of 5</p>
-          <h2 class="step-title">Let's get started 👋</h2>
+          <h2 class="step-title">Your contact info</h2>
           <div class="field">
             <label>Full Name</label>
             <input type="text" id="inp-name" placeholder="Jane Smith" autocomplete="name">
@@ -330,65 +427,65 @@
             <label>Phone Number</label>
             <input type="tel" id="inp-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
           </div>
-          <button class="btn-next" onclick="goStep(2)">Continue <i class="fa-solid fa-arrow-right"></i></button>
+          <button class="btn-next" onclick="goStep(2)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
         </div>
 
         <!-- Step 2: LinkedIn + Bio -->
         <div class="step" id="step-2">
           <p class="step-label">Step 2 of 5</p>
-          <h2 class="step-title">Your profile & bio</h2>
+          <h2 class="step-title">Profile & bio</h2>
           <div class="field">
-            <label>LinkedIn Profile URL</label>
+            <label>LinkedIn URL</label>
             <input type="url" id="inp-linkedin" placeholder="https://linkedin.com/in/yourname">
           </div>
           <div class="field">
-            <label>Short Bio / Summary</label>
-            <textarea id="inp-bio" placeholder="Finance student at USF with a passion for investment banking. Graduating May 2026. Looking for summer internships." maxlength="250"></textarea>
+            <label>Short Bio</label>
+            <textarea id="inp-bio" placeholder="Finance student at USF. Interested in investment banking. Graduating May 2026." maxlength="250"></textarea>
             <div class="char-count" id="bio-count">0 / 250</div>
           </div>
-          <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right"></i></button>
-          <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button class="btn-next" onclick="goStep(3)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
+          <button class="btn-back" onclick="goStep(1)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
         </div>
 
         <!-- Step 3: Headshot -->
         <div class="step" id="step-3">
           <p class="step-label">Step 3 of 5</p>
-          <h2 class="step-title">Add your headshot 📸</h2>
+          <h2 class="step-title">Your headshot</h2>
           <div class="upload-area" id="photo-area">
             <input type="file" id="inp-photo" accept="image/*">
-            <div class="upload-icon">🤳</div>
-            <div class="upload-hint"><strong>Tap to upload</strong> a photo</div>
+            <div class="upload-icon"><i class="fa-regular fa-image"></i></div>
+            <div class="upload-hint"><strong>Tap to upload</strong> a photo<br>Square crop works best</div>
           </div>
           <div class="crop-wrap" id="crop-wrap">
             <div class="crop-circle" id="crop-circle">
               <img id="crop-img" class="crop-img" src="" alt="">
             </div>
-            <p class="crop-hint">Drag to reposition your photo</p>
+            <p class="crop-hint">Drag to reposition</p>
             <button class="change-photo-btn" onclick="document.getElementById('inp-photo').click()">Change photo</button>
           </div>
-          <button class="btn-next" onclick="goStep(4)">Continue <i class="fa-solid fa-arrow-right"></i></button>
-          <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button class="btn-next" onclick="goStep(4)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
+          <button class="btn-back" onclick="goStep(2)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
         </div>
 
         <!-- Step 4: Resume -->
         <div class="step" id="step-4">
           <p class="step-label">Step 4 of 5</p>
-          <h2 class="step-title">Upload your resume 📄</h2>
+          <h2 class="step-title">Upload your resume</h2>
           <div class="upload-area" id="resume-area">
             <input type="file" id="inp-resume" accept=".pdf">
-            <div class="upload-icon"><i class="fa-solid fa-file-pdf" style="color:rgba(255,255,255,0.8)"></i></div>
+            <div class="upload-icon"><i class="fa-regular fa-file-pdf"></i></div>
             <div class="upload-hint"><strong>Tap to upload</strong> your resume<br>PDF only</div>
             <div class="upload-filename" id="resume-filename"></div>
           </div>
-          <button class="btn-next" onclick="goStep(5)">Continue <i class="fa-solid fa-arrow-right"></i></button>
-          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button class="btn-next" onclick="goStep(5)">Continue <i class="fa-solid fa-arrow-right fa-sm"></i></button>
+          <button class="btn-back" onclick="goStep(3)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
         </div>
 
         <!-- Step 5: PIN -->
         <div class="step" id="step-5">
           <p class="step-label">Step 5 of 5</p>
-          <h2 class="step-title">Create a 4-digit PIN 🔒</h2>
-          <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:20px; line-height:1.6;">You'll use this PIN to edit your profile later. Don't forget it!</p>
+          <h2 class="step-title">Create your PIN</h2>
+          <p style="color:var(--gray-400); font-size:0.82rem; font-weight:500; margin-bottom:20px; line-height:1.6;">You'll need this 4-digit PIN to edit your profile later.</p>
           <div class="field">
             <label>4-Digit PIN</label>
             <input type="number" id="inp-pin" placeholder="e.g. 1234" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
@@ -398,21 +495,21 @@
             <input type="number" id="inp-pin-confirm" placeholder="Re-enter PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
           </div>
           <button class="btn-submit" id="submit-btn" onclick="submitProfile()">
-            <i class="fa-solid fa-check"></i> Create My Card
+            Create My Card
           </button>
-          <button class="btn-back" onclick="goStep(4)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <button class="btn-back" onclick="goStep(4)"><i class="fa-solid fa-arrow-left fa-sm"></i> Back</button>
         </div>
 
         <!-- Submitting -->
         <div class="step" id="step-submitting">
           <div class="submitting-inner">
-            <div class="loader" style="margin: 0 auto 22px;"></div>
+            <div class="loader" style="margin: 0 auto 24px;"></div>
             <div class="submitting-title">Building your card...</div>
-            <div class="submitting-sub">Uploading files and saving your profile.<br>This takes just a few seconds.</div>
+            <div class="submitting-sub">Uploading your files and saving your profile.<br>Just a few seconds.</div>
           </div>
         </div>
 
-      </div>
+      </div><!-- /wizard-card -->
     </div>
   </div>
 
@@ -433,8 +530,8 @@
           <span class="pbtn-icon"><i class="fa-brands fa-linkedin-in"></i></span>
         </a>
         <button id="contact-btn" class="pbtn pbtn-white">
-          <span>Contact Information</span>
-          <span class="pbtn-icon"><i class="fa-solid fa-circle-info"></i></span>
+          <span>Save Contact</span>
+          <span class="pbtn-icon"><i class="fa-solid fa-address-card"></i></span>
         </button>
       </div>
 
@@ -449,27 +546,21 @@
   <div id="screen-pin" class="screen">
     <div class="wizard-wrap">
       <div class="wizard-logo">
-        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
-          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
-          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
-        </svg>
-        <div class="wizard-logo-text">OneTap</div>
-        <div class="wizard-logo-sub">Enter your PIN to edit</div>
+        <div class="wizard-wordmark">One<span>Tap</span></div>
+        <div class="wizard-logo-sub">Enter your PIN to continue</div>
       </div>
       <div class="wizard-card">
-        <h2 class="step-title">Enter your PIN 🔒</h2>
-        <p style="color:rgba(255,255,255,0.55); font-size:0.85rem; margin-bottom:20px; line-height:1.6;">Enter the 4-digit PIN you created when setting up your card.</p>
+        <p class="step-label">Edit Profile</p>
+        <h2 class="step-title">Enter your PIN</h2>
+        <p style="color:var(--gray-400); font-size:0.82rem; font-weight:500; margin-bottom:20px; line-height:1.6;">Enter the 4-digit PIN you created when setting up your card.</p>
         <div class="field">
           <label>4-Digit PIN</label>
           <input type="number" id="pin-entry" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length>4) this.value=this.value.slice(0,4)">
         </div>
-        <div id="pin-error" style="color:#f74a4a; font-size:0.82rem; margin-top:-8px; margin-bottom:8px; display:none;">Incorrect PIN. Please try again.</div>
-        <button class="btn-submit" onclick="verifyPin()">
-          <i class="fa-solid fa-unlock"></i> Unlock
-        </button>
+        <div id="pin-error" class="pin-error">Incorrect PIN. Please try again.</div>
+        <button class="btn-submit" onclick="verifyPin()">Unlock</button>
         <button class="btn-back" onclick="showScreen('profile')">
-          <i class="fa-solid fa-arrow-left"></i> Cancel
+          <i class="fa-solid fa-arrow-left fa-sm"></i> Cancel
         </button>
       </div>
     </div>
@@ -479,15 +570,11 @@
   <div id="screen-edit" class="screen">
     <div class="wizard-wrap">
       <div class="wizard-logo">
-        <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="18" fill="#4a6cf7"/>
-          <circle cx="50" cy="50" r="30" stroke="#4a6cf7" stroke-width="6" fill="none" opacity="0.6"/>
-          <circle cx="50" cy="50" r="44" stroke="#4a6cf7" stroke-width="5" fill="none" opacity="0.3"/>
-        </svg>
-        <div class="wizard-logo-text">OneTap</div>
-        <div class="wizard-logo-sub">Edit your profile</div>
+        <div class="wizard-wordmark">One<span>Tap</span></div>
+        <div class="wizard-logo-sub">Update your profile</div>
       </div>
       <div class="wizard-card">
+        <p class="step-label">Edit Profile</p>
         <h2 class="step-title">Update your info</h2>
 
         <div class="field" style="margin-top:4px;">
@@ -503,11 +590,11 @@
           <input type="tel" id="edit-phone" placeholder="+1 (813) 555-0000" autocomplete="tel">
         </div>
         <div class="field">
-          <label>LinkedIn Profile URL</label>
+          <label>LinkedIn URL</label>
           <input type="url" id="edit-linkedin" placeholder="https://linkedin.com/in/yourname">
         </div>
         <div class="field">
-          <label>Bio / Summary</label>
+          <label>Short Bio</label>
           <textarea id="edit-bio" maxlength="250" placeholder="Tell people about yourself..."></textarea>
           <div class="char-count" id="edit-bio-count">0 / 250</div>
         </div>
@@ -516,7 +603,7 @@
           <label>Headshot <span class="optional">— leave blank to keep current</span></label>
           <div class="upload-area" id="edit-photo-area">
             <input type="file" id="edit-inp-photo" accept="image/*">
-            <div class="upload-icon">🤳</div>
+            <div class="upload-icon"><i class="fa-regular fa-image"></i></div>
             <div class="upload-hint"><strong>Tap to replace</strong> your photo</div>
           </div>
           <div class="crop-wrap" id="edit-crop-wrap">
@@ -532,22 +619,20 @@
           <label>Resume <span class="optional">— leave blank to keep current</span></label>
           <div class="upload-area">
             <input type="file" id="edit-inp-resume" accept=".pdf">
-            <div class="upload-icon"><i class="fa-solid fa-file-pdf" style="color:rgba(255,255,255,0.8)"></i></div>
+            <div class="upload-icon"><i class="fa-regular fa-file-pdf"></i></div>
             <div class="upload-hint"><strong>Tap to replace</strong> your resume<br>PDF only</div>
             <div class="upload-filename" id="edit-resume-filename"></div>
           </div>
         </div>
 
-        <div id="edit-saving" style="display:none; text-align:center; padding:10px 0;">
+        <div id="edit-saving" style="display:none; text-align:center; padding:12px 0;">
           <div class="loader" style="margin:0 auto 12px;"></div>
-          <div style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Saving changes...</div>
+          <div style="color:var(--gray-400); font-size:0.85rem; font-weight:500;">Saving changes...</div>
         </div>
 
-        <button class="btn-submit" id="edit-save-btn" onclick="saveEdits()">
-          <i class="fa-solid fa-check"></i> Save Changes
-        </button>
+        <button class="btn-submit" id="edit-save-btn" onclick="saveEdits()">Save Changes</button>
         <button class="btn-back" onclick="showScreen('profile')">
-          <i class="fa-solid fa-arrow-left"></i> Cancel
+          <i class="fa-solid fa-arrow-left fa-sm"></i> Cancel
         </button>
       </div>
     </div>
@@ -647,7 +732,7 @@
     }
 
     // ── Photo crop ───────────────────────────────────────────────────────────
-    const CROP_SIZE = 220;
+    const CROP_SIZE = 200;
     let cropOffsetX = 0, cropOffsetY = 0;
     let cropImgW = 0, cropImgH = 0;
     let isDragging = false, dragStartX = 0, dragStartY = 0;
