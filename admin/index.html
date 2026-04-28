@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>OneTap Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f3f3f3;
+      --gray-200: #e5e5e5;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--gray-50);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ---- LOGIN ---- */
+    .login-wrap {
+      width: 100%; max-width: 360px;
+    }
+
+    .wordmark {
+      font-size: 1.25rem; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--black);
+      text-align: center; margin-bottom: 6px;
+    }
+    .wordmark span { color: #1d4ed8; }
+    .login-sub {
+      text-align: center; color: var(--gray-400);
+      font-size: 0.8rem; font-weight: 500; margin-bottom: 28px;
+    }
+
+    .login-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 28px 24px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; color: var(--black);
+      font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 11px 13px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      color: var(--black); font-size: 0.9375rem; font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    .field input:focus { border-color: var(--black); background: var(--white); }
+
+    .btn {
+      width: 100%; padding: 13px;
+      background: var(--black); color: var(--white);
+      border: none; border-radius: 8px;
+      font-size: 0.9375rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; margin-top: 4px;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+
+    .login-error {
+      color: #dc2626; font-size: 0.8rem; font-weight: 500;
+      text-align: center; margin-top: 12px; display: none;
+    }
+
+    /* ---- ADMIN PANEL ---- */
+    .admin-wrap {
+      width: 100%; max-width: 400px;
+      display: none; flex-direction: column; gap: 16px;
+    }
+
+    .admin-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-title {
+      font-size: 1.25rem; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--black);
+    }
+    .admin-title span { color: #1d4ed8; }
+    .logout-btn {
+      background: none; border: none;
+      color: var(--gray-400); font-size: 0.78rem; font-weight: 500;
+      font-family: inherit; cursor: pointer;
+    }
+    .logout-btn:hover { color: var(--black); }
+
+    .generate-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .generate-label {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gray-400); margin-bottom: 6px;
+    }
+    .generate-title {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--black); margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .generate-btn {
+      width: 100%; padding: 14px;
+      background: var(--black); color: var(--white);
+      border: none; border-radius: 8px;
+      font-size: 1rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: opacity 0.15s;
+      margin-bottom: 16px;
+    }
+    .generate-btn:hover { opacity: 0.85; }
+
+    /* Result box */
+    .result-box {
+      display: none;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .result-label {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gray-400); margin-bottom: 8px;
+    }
+
+    .result-id {
+      font-size: 1.5rem; font-weight: 800;
+      letter-spacing: 0.05em; color: var(--black);
+      margin-bottom: 4px;
+    }
+
+    .result-url {
+      font-size: 0.78rem; color: var(--gray-600);
+      margin-bottom: 14px; word-break: break-all;
+    }
+
+    .nfc-box {
+      background: var(--black);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .nfc-label {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); margin-bottom: 4px;
+    }
+    .nfc-value {
+      font-size: 0.95rem; font-weight: 600;
+      color: #ffffff; word-break: break-all;
+      font-family: 'Courier New', monospace;
+    }
+
+    .copy-btn {
+      width: 100%; padding: 11px;
+      background: var(--white); color: var(--black);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      margin-bottom: 8px;
+    }
+    .copy-btn:hover { border-color: var(--black); }
+    .copy-btn.copied {
+      background: var(--green-light);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .open-btn {
+      width: 100%; padding: 11px;
+      background: none; color: var(--gray-400);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.8rem; font-weight: 500; font-family: inherit;
+      cursor: pointer; text-decoration: none;
+      display: block; text-align: center;
+      transition: color 0.15s;
+    }
+    .open-btn:hover { color: var(--black); border-color: var(--black); }
+
+    /* Recent cards */
+    .recent-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 20px 24px;
+    }
+    .recent-title {
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--black); margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+    .recent-list {
+      display: flex; flex-direction: column; gap: 10px;
+      max-height: 240px; overflow-y: auto;
+    }
+    .recent-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+    }
+    .recent-item-left { flex: 1; min-width: 0; }
+    .recent-item-id {
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--black); letter-spacing: 0.03em;
+      font-family: 'Courier New', monospace;
+    }
+    .recent-item-name {
+      font-size: 0.75rem; color: var(--gray-400); font-weight: 500;
+      margin-top: 2px;
+    }
+    .recent-item-status {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 8px; border-radius: 99px;
+      flex-shrink: 0; margin-left: 8px;
+    }
+    .status-active { background: var(--green-light); color: var(--green); }
+    .status-empty  { background: var(--gray-100); color: var(--gray-400); }
+
+    .recent-empty {
+      text-align: center; color: var(--gray-400);
+      font-size: 0.82rem; font-weight: 500; padding: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-wrap" id="login-screen">
+    <div class="wordmark">One<span>Tap</span></div>
+    <div class="login-sub">Admin — Card Management</div>
+    <div class="login-card">
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') login()">
+      </div>
+      <button class="btn" onclick="login()">Sign In</button>
+      <div class="login-error" id="login-error">Incorrect password. Try again.</div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-wrap" id="admin-screen">
+
+    <div class="admin-header">
+      <div class="admin-title">One<span>Tap</span></div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+
+    <!-- Generate card -->
+    <div class="generate-card">
+      <div class="generate-label">Card Programming</div>
+      <div class="generate-title">Generate a new card URL</div>
+      <button class="generate-btn" onclick="generateCard()">Generate New Card</button>
+
+      <div class="result-box" id="result-box">
+        <div class="result-label">New Card ID</div>
+        <div class="result-id" id="result-id"></div>
+        <div class="result-url" id="result-url"></div>
+
+        <div class="nfc-box">
+          <div class="nfc-label">Paste into NFC Tools</div>
+          <div class="nfc-value" id="nfc-value"></div>
+        </div>
+
+        <button class="copy-btn" id="copy-btn" onclick="copyNFC()">Copy for NFC Tools</button>
+        <a class="open-btn" id="open-btn" href="#" target="_blank">Open card URL →</a>
+      </div>
+    </div>
+
+    <!-- Recent cards -->
+    <div class="recent-card">
+      <div class="recent-title">Recent Cards</div>
+      <div class="recent-list" id="recent-list">
+        <div class="recent-empty">Loading...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://ivmxvbqqgvadkumgzmrg.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_WahaRq3N1AEQ7IrCgDVLMw_dIGZBEm0';
+    const ADMIN_PASS  = 'onetap2025';
+    const BASE_URL    = 'onetapcards.co/card/?id=';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ── Auth ─────────────────────────────────────────────────────────────────
+    function login() {
+      const val = document.getElementById('login-password').value;
+      if (val === ADMIN_PASS) {
+        document.getElementById('login-screen').style.display  = 'none';
+        document.getElementById('admin-screen').style.display  = 'flex';
+        loadRecent();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      document.getElementById('login-screen').style.display  = 'block';
+      document.getElementById('admin-screen').style.display  = 'none';
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-error').style.display = 'none';
+    }
+
+    // ── Generate ──────────────────────────────────────────────────────────────
+    function generateId() {
+      const arr = new Uint8Array(4);
+      crypto.getRandomValues(arr);
+      return Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
+    }
+
+    function generateCard() {
+      const id     = generateId();
+      const full   = 'https://' + BASE_URL + id;
+      const forNFC = BASE_URL + id;
+
+      document.getElementById('result-id').textContent  = id;
+      document.getElementById('result-url').textContent = full;
+      document.getElementById('nfc-value').textContent  = forNFC;
+      document.getElementById('open-btn').href          = full;
+
+      const copyBtn = document.getElementById('copy-btn');
+      copyBtn.textContent = 'Copy for NFC Tools';
+      copyBtn.classList.remove('copied');
+
+      document.getElementById('result-box').style.display = 'block';
+    }
+
+    function copyNFC() {
+      const val = document.getElementById('nfc-value').textContent;
+      navigator.clipboard.writeText(val).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy for NFC Tools';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // ── Recent cards ──────────────────────────────────────────────────────────
+    async function loadRecent() {
+      const list = document.getElementById('recent-list');
+      try {
+        const { data, error } = await db
+          .from('profiles')
+          .select('id, name, created_at')
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          list.innerHTML = '<div class="recent-empty">No cards yet.</div>';
+          return;
+        }
+
+        list.innerHTML = data.map(p => `
+          <div class="recent-item">
+            <div class="recent-item-left">
+              <div class="recent-item-id">${p.id}</div>
+              <div class="recent-item-name">${p.name || 'Not set up yet'}</div>
+            </div>
+            <span class="recent-item-status ${p.name ? 'status-active' : 'status-empty'}">
+              ${p.name ? 'Active' : 'Empty'}
+            </span>
+          </div>
+        `).join('');
+      } catch(e) {
+        list.innerHTML = '<div class="recent-empty">Could not load cards.</div>';
+      }
+    }
+  </script>
+
+</body>
+</html>
