@@ -345,8 +345,26 @@
       return Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
     }
 
-    function generateCard() {
-      const id     = generateId();
+    async function generateCard() {
+      const btn = document.querySelector('.generate-btn');
+      btn.textContent = 'Checking...';
+      btn.disabled = true;
+
+      let id;
+      let attempts = 0;
+      while (true) {
+        id = generateId();
+        attempts++;
+        const { data } = await db.from('profiles').select('id').eq('id', id).maybeSingle();
+        if (!data) break;
+        if (attempts > 10) {
+          alert('Could not generate a unique ID. Try again.');
+          btn.textContent = 'Generate New Card';
+          btn.disabled = false;
+          return;
+        }
+      }
+
       const full   = 'https://' + BASE_URL + id;
       const forNFC = BASE_URL + id;
 
@@ -360,6 +378,8 @@
       copyBtn.classList.remove('copied');
 
       document.getElementById('result-box').style.display = 'block';
+      btn.textContent = 'Generate New Card';
+      btn.disabled = false;
     }
 
     function copyNFC() {
